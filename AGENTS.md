@@ -1,4 +1,4 @@
-# Project context
+﻿# Project context
 
 This repository is a starter template for a greenfield Java project used in an introductory software engineering course in an undergraduate computer science program. Students use it as the starting point for their own projects.
 
@@ -33,3 +33,7 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+## Customization
+
+The sample output is illustrative only. Output formatting and command/display formats may differ from the sample. The chatbot's personality may also be customized to make it unique, as long as the required behavior and functionality are preserved.
