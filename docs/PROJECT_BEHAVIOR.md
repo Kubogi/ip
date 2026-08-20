@@ -2,6 +2,8 @@
 
 Miku is a command-line Java 25 task tracker with a cheerful, idol-like personality.
 
+Miku emits user-facing text as UTF-8. When launching from an IDE or shell, configure stdout and stderr as UTF-8 if the terminal does not detect it automatically (for example, `-Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8`).
+
 ## Commands
 
 * todo <description> creates a task without a date or time.
@@ -11,7 +13,8 @@ Miku is a command-line Java 25 task tracker with a cheerful, idol-like personali
 * mark <number> and unmark <number> update completion status.
 * bye exits the application.
 
-Date and time values are currently retained as user-provided strings. Unrecognized commands are ignored.
+Date and time values are currently retained as user-provided strings.
+* Empty commands, unknown commands, missing parameters, invalid task numbers, and empty task fields display a Miku-style error message. The application then continues reading input.
 
 ## Display conventions
 
