@@ -1,4 +1,4 @@
-﻿# Project context
+# Project context
 
 This repository is a starter template for a greenfield Java project used in an introductory software engineering course in an undergraduate computer science program. Students use it as the starting point for their own projects.
 
@@ -37,3 +37,15 @@ Do not commit or push unless explicitly asked.
 ## Customization
 
 The sample output is illustrative only. Output formatting and command/display formats may differ from the sample. The chatbot's personality may also be customized to make it unique, as long as the required behavior and functionality are preserved.
+
+# Project documentation
+
+Current commands, datetime formats, display conventions, important files, and behavior details are documented in docs/PROJECT_BEHAVIOR.md. Keep that document updated whenever these details change.
+
+# Miku presentation style
+
+Keep the project cheerful and idol-like, using symbols such as ★, ☆, ♪, ♫, and ✨ in user-facing messages and suitable documentation. Use symbols meaningfully and preserve readability.
+
+# Micro-commit policy
+
+Use small, focused commits. Keep implementation, tests, and directly related documentation together; do not mix unrelated refactoring or formatting cleanup into feature commits. Use lightweight tags only for milestones, and do not commit or push unless explicitly requested.
