@@ -54,3 +54,17 @@ bye
 ```text
 TODO: capture the Java 25 application output after the UI format is finalized.
 ```
+
+
+## Test case: Delete a task
+
+Aim: Verify that `delete <number>` removes the selected task and reports the updated count.
+
+### Inputs
+```text
+todo read book
+event project meeting /from Aug 6th 2pm /to 4pm
+delete 2
+list
+bye
+```

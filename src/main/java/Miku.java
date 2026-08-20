@@ -48,6 +48,7 @@ public class Miku {
         case "list" -> handleList(tasks, cmdArgs);
         case "mark" -> handleMark(tasks, cmdArgs);
         case "unmark" -> handleUnmark(tasks, cmdArgs);
+        case "delete" -> handleDelete(tasks, cmdArgs);
         case "todo" -> handleTodo(tasks, command);
         case "deadline" -> handleDeadline(tasks, command);
         case "event" -> handleEvent(tasks, command);
@@ -140,6 +141,17 @@ public class Miku {
         return false;
     }
 
+    /** Processes the delete command. */
+    private static boolean handleDelete(ArrayList<Task> tasks, String[] cmdArgs) throws MikuException {
+        int taskIndex = getTaskIndexFromArguments(tasks, cmdArgs, "delete");
+        Task removedTask = tasks.remove(taskIndex);
+        System.out.println("Noted ♪ I've removed this task for you!");
+        System.out.println(removedTask);
+        System.out.println("Now you have " + tasks.size() + " task(s) in the list! ☆");
+        finishCommand();
+        return false;
+    }
+
     /** Processes the bye command. */
     private static boolean handleBye(String[] cmdArgs) throws MikuException {
         requireNoExtraArguments(cmdArgs, "bye does not need any parameters!!");
@@ -148,8 +160,13 @@ public class Miku {
         return true;
     }
 
-    /** Returns the task selected by a mark or unmark command. */
-    private static Task getTaskFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command)
+    /** Returns the task selected by a mark, unmark, or delete command. */
+    private static Task getTaskFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command) throws MikuException {
+        return tasks.get(getTaskIndexFromArguments(tasks, cmdArgs, command));
+    }
+
+    /** Validates a task-number argument and returns its zero-based list index. */
+    private static int getTaskIndexFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command)
             throws MikuException {
         if (cmdArgs.length < 2) {
             throw new MikuException("Please provide a task number for " + command + " ♪");
@@ -166,7 +183,7 @@ public class Miku {
         if (taskNumber < 1 || taskNumber > tasks.size()) {
             throw new MikuException("That task number is not in Miku's list!! ✨");
         }
-        return tasks.get(taskNumber - 1);
+        return taskNumber - 1;
     }
 
     /** Rejects parameters for commands that do not accept them. */

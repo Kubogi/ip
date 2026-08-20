@@ -11,6 +11,7 @@ Miku emits user-facing text as UTF-8. When launching from an IDE or shell, confi
 * event <description> /from <start> /to <end> creates a task with a start and end date or time.
 * list displays all tasks.
 * mark <number> and unmark <number> update completion status.
+* delete <number> removes the selected task from the list.
 * bye exits the application.
 
 Date and time values are currently retained as user-provided strings.
