@@ -7,15 +7,15 @@ public class Miku {
     public static void main(String[] args) {
         Ui.configureUtf8Output();
         Ui ui = new Ui();
+        Parser parser = new Parser();
         ui.showWelcome();
         Scanner scanner = new Scanner(System.in);
         TaskList tasks = new TaskList();
         Storage storage = new Storage();
         while (scanner.hasNextLine()) {
-            String trimmedCommand = scanner.nextLine().trim();
             boolean shouldExit;
             try {
-                shouldExit = processCommand(tasks, storage, ui, trimmedCommand);
+                shouldExit = processCommand(tasks, storage, ui, parser, scanner.nextLine().trim());
             } catch (MikuException exception) {
                 ui.showError(exception.getMessage());
                 continue;
@@ -26,100 +26,42 @@ public class Miku {
         }
     }
 
-    /** Dispatches one normalized command and returns whether the application should exit. */
-    private static boolean processCommand(TaskList tasks, Storage storage, Ui ui, String command)
+    /** Dispatches one parsed command and returns whether the application should exit. */
+    private static boolean processCommand(TaskList tasks, Storage storage, Ui ui, Parser parser, String command)
             throws MikuException {
         ui.showSeparator();
-        if (command.isEmpty()) {
-            throw new MikuException("The command cannot be empty. Please tell Miku what to do \u266a");
-        }
-        String[] cmdArgs = command.split("\\s+");
-        return switch (cmdArgs[0]) {
-        case "bye" -> handleBye(ui, cmdArgs);
-        case "list" -> handleList(tasks, ui, cmdArgs);
-        case "mark" -> handleMark(tasks, storage, ui, cmdArgs);
-        case "unmark" -> handleUnmark(tasks, storage, ui, cmdArgs);
-        case "delete" -> handleDelete(tasks, storage, ui, cmdArgs);
-        case "todo" -> handleTodo(tasks, storage, ui, command);
-        case "deadline" -> handleDeadline(tasks, storage, ui, command);
-        case "event" -> handleEvent(tasks, storage, ui, command);
-        default -> throw new MikuException("I'm sorry, but Miku doesn't know what that means :-(");
+        Parser.ParsedCommand parsedCommand = parser.parse(command);
+        return switch (parsedCommand.type()) {
+        case BYE -> handleBye(ui, parsedCommand.arguments());
+        case LIST -> handleList(tasks, ui, parsedCommand.arguments());
+        case MARK -> handleMark(tasks, storage, ui, parsedCommand.arguments());
+        case UNMARK -> handleUnmark(tasks, storage, ui, parsedCommand.arguments());
+        case DELETE -> handleDelete(tasks, storage, ui, parsedCommand.arguments());
+        case ADD_TASK -> handleAddTask(tasks, storage, ui, parsedCommand.task());
         };
     }
 
-    /** Processes a todo command. */
-    private static boolean handleTodo(TaskList tasks, Storage storage, Ui ui, String command)
-            throws MikuException {
-        String description = command.substring("todo".length()).trim();
-        if (description.isEmpty()) {
-            throw new MikuException("The description of a todo cannot be empty!! \u266a");
-        }
-        addTask(tasks, storage, ui, new Todo(description));
-        ui.showSeparator();
-        return false;
-    }
-
-    /** Processes a deadline command and validates its description and due date. */
-    private static boolean handleDeadline(TaskList tasks, Storage storage, Ui ui, String command)
-            throws MikuException {
-        int separatorIndex = command.indexOf(" /by ");
-        if (separatorIndex < 0) {
-            throw new MikuException("A deadline needs a description and a due date using /by !! \u266b");
-        }
-        String description = command.substring("deadline".length(), separatorIndex).trim();
-        String deadline = command.substring(separatorIndex + " /by ".length()).trim();
-        if (description.isEmpty()) {
-            throw new MikuException("The description of a deadline cannot be empty!! \u266a");
-        }
-        if (deadline.isEmpty()) {
-            throw new MikuException("The due date of a deadline cannot be empty!! \u266b");
-        }
-        DateTimeParser.ParsedDateTime parsedDeadline = DateTimeParser.parse(deadline);
-        addTask(tasks, storage, ui, new Deadline(description, parsedDeadline.value(), parsedDeadline.includesTime()));
-        ui.showSeparator();
-        return false;
-    }
-
-    /** Processes an event command and validates all of its fields. */
-    private static boolean handleEvent(TaskList tasks, Storage storage, Ui ui, String command)
-            throws MikuException {
-        int fromIndex = command.indexOf(" /from ");
-        int toIndex = fromIndex < 0 ? -1 : command.indexOf(" /to ", fromIndex + " /from ".length());
-        if (fromIndex < 0 || toIndex < 0) {
-            throw new MikuException("An event needs a description, a start using /from, and an end using /to !! \u2728");
-        }
-        String description = command.substring("event".length(), fromIndex).trim();
-        String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String to = command.substring(toIndex + " /to ".length()).trim();
-        if (description.isEmpty()) {
-            throw new MikuException("The description of an event cannot be empty!! \u266a");
-        }
-        if (from.isEmpty()) {
-            throw new MikuException("The start of an event cannot be empty!! \u266b");
-        }
-        if (to.isEmpty()) {
-            throw new MikuException("The end of an event cannot be empty!! \u2728");
-        }
-        DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
-        DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        addTask(tasks, storage, ui, new Event(description, parsedFrom.value(), parsedFrom.includesTime(),
-                parsedTo.value(), parsedTo.includesTime()));
+    /** Adds a parser-created task, saves it, and displays its confirmation. */
+    private static boolean handleAddTask(TaskList tasks, Storage storage, Ui ui, Task task) throws MikuException {
+        tasks.add(task);
+        saveTasks(storage, tasks);
+        ui.showTaskAdded(task, tasks.size());
         ui.showSeparator();
         return false;
     }
 
     /** Processes the list command. */
-    private static boolean handleList(TaskList tasks, Ui ui, String[] cmdArgs) throws MikuException {
-        requireNoExtraArguments(cmdArgs, "list does not need any parameters!!");
+    private static boolean handleList(TaskList tasks, Ui ui, String[] arguments) throws MikuException {
+        requireNoExtraArguments(arguments, "list does not need any parameters!!");
         ui.showTaskList(tasks);
         ui.showSeparator();
         return false;
     }
 
     /** Processes the mark command. */
-    private static boolean handleMark(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleMark(TaskList tasks, Storage storage, Ui ui, String[] arguments)
             throws MikuException {
-        Task task = getTaskFromArguments(tasks, cmdArgs, "mark");
+        Task task = getTaskFromArguments(tasks, arguments, "mark");
         task.markAsDone();
         saveTasks(storage, tasks);
         ui.showTaskMarked(task);
@@ -128,9 +70,9 @@ public class Miku {
     }
 
     /** Processes the unmark command. */
-    private static boolean handleUnmark(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleUnmark(TaskList tasks, Storage storage, Ui ui, String[] arguments)
             throws MikuException {
-        Task task = getTaskFromArguments(tasks, cmdArgs, "unmark");
+        Task task = getTaskFromArguments(tasks, arguments, "unmark");
         task.markAsNotDone();
         saveTasks(storage, tasks);
         ui.showTaskUnmarked(task);
@@ -139,9 +81,9 @@ public class Miku {
     }
 
     /** Processes the delete command. */
-    private static boolean handleDelete(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleDelete(TaskList tasks, Storage storage, Ui ui, String[] arguments)
             throws MikuException {
-        int taskIndex = getTaskIndexFromArguments(tasks, cmdArgs, "delete");
+        int taskIndex = getTaskIndexFromArguments(tasks, arguments, "delete");
         Task removedTask = tasks.remove(taskIndex);
         saveTasks(storage, tasks);
         ui.showTaskDeleted(removedTask, tasks.size());
@@ -150,30 +92,30 @@ public class Miku {
     }
 
     /** Processes the bye command. */
-    private static boolean handleBye(Ui ui, String[] cmdArgs) throws MikuException {
-        requireNoExtraArguments(cmdArgs, "bye does not need any parameters!!");
+    private static boolean handleBye(Ui ui, String[] arguments) throws MikuException {
+        requireNoExtraArguments(arguments, "bye does not need any parameters!!");
         ui.showGoodbye();
         ui.showSeparator();
         return true;
     }
 
     /** Returns the task selected by a mark, unmark, or delete command. */
-    private static Task getTaskFromArguments(TaskList tasks, String[] cmdArgs, String command) throws MikuException {
-        return tasks.get(getTaskIndexFromArguments(tasks, cmdArgs, command));
+    private static Task getTaskFromArguments(TaskList tasks, String[] arguments, String command) throws MikuException {
+        return tasks.get(getTaskIndexFromArguments(tasks, arguments, command));
     }
 
     /** Validates a task-number argument and returns its zero-based list index. */
-    private static int getTaskIndexFromArguments(TaskList tasks, String[] cmdArgs, String command)
+    private static int getTaskIndexFromArguments(TaskList tasks, String[] arguments, String command)
             throws MikuException {
-        if (cmdArgs.length < 2) {
+        if (arguments.length < 2) {
             throw new MikuException("Please provide a task number for " + command + " \u266a");
         }
-        if (cmdArgs.length > 2) {
+        if (arguments.length > 2) {
             throw new MikuException("Only one task number is needed for " + command + " \u266b");
         }
         int taskNumber;
         try {
-            taskNumber = Integer.parseInt(cmdArgs[1]);
+            taskNumber = Integer.parseInt(arguments[1]);
         } catch (NumberFormatException exception) {
             throw new MikuException("The task number must be a whole number!! \u266b");
         }
@@ -184,17 +126,10 @@ public class Miku {
     }
 
     /** Rejects parameters for commands that do not accept them. */
-    private static void requireNoExtraArguments(String[] cmdArgs, String message) throws MikuException {
-        if (cmdArgs.length > 1) {
+    private static void requireNoExtraArguments(String[] arguments, String message) throws MikuException {
+        if (arguments.length > 1) {
             throw new MikuException(message);
         }
-    }
-
-    /** Adds a task and prints the confirmation shown after a successful addition. */
-    private static void addTask(TaskList tasks, Storage storage, Ui ui, Task task) throws MikuException {
-        tasks.add(task);
-        saveTasks(storage, tasks);
-        ui.showTaskAdded(task, tasks.size());
     }
 
     /** Saves task changes and turns an unexpected write failure into a command error. */
