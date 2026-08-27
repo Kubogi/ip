@@ -14,7 +14,8 @@ public final class DateTimeParser {
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("d/M/uuuu HHmm")
             .withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT = DateTimeFormatter.ofPattern("MMM dd uuuu");
-    private static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a");
+    private static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd uuuu h:mm a");
 
     /** Prevents construction of this utility class. */
     private DateTimeParser() {
@@ -46,8 +47,8 @@ public final class DateTimeParser {
     }
 
     /** Formats a typed date in the display format used by task list entries. */
-    public static String format(LocalDateTime dateTime, boolean includesTime) {
-        return (includesTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT).format(dateTime);
+    public static String format(LocalDateTime dateTime, boolean hasTime) {
+        return (hasTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT).format(dateTime);
     }
 
     /** Returns the error used consistently when a supplied date cannot be parsed. */
@@ -56,6 +57,6 @@ public final class DateTimeParser {
     }
 
     /** Holds a parsed date-time and whether the original input included a time. */
-    public record ParsedDateTime(LocalDateTime value, boolean includesTime) {
+    public record ParsedDateTime(LocalDateTime value, boolean hasTime) {
     }
 }

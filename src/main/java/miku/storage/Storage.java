@@ -1,15 +1,15 @@
 package miku.storage;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import miku.MikuException;
 import miku.task.Deadline;
@@ -60,18 +60,20 @@ public class Storage {
     /** Recreates a deadline and retains whether it displayed a time. */
     private Task createDeadline(Map<String, Object> fields, String description) throws MikuException {
         LocalDateTime dateTime = parseDateTime(getString(fields, "datetime"));
-        boolean includesTime = getOptionalBoolean(fields, "includesTime", !dateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Deadline(description, dateTime, includesTime);
+        boolean hasTime = getOptionalBoolean(fields, "includesTime",
+                !dateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Deadline(description, dateTime, hasTime);
     }
 
     /** Recreates an event and retains whether its endpoints displayed times. */
     private Task createEvent(Map<String, Object> fields, String description) throws MikuException {
         LocalDateTime from = parseDateTime(getString(fields, "from"));
         LocalDateTime to = parseDateTime(getString(fields, "to"));
-        boolean fromIncludesTime = getOptionalBoolean(fields, "fromIncludesTime",
+        boolean hasStartTime = getOptionalBoolean(fields, "fromIncludesTime",
                 !from.toLocalTime().equals(LocalTime.MIDNIGHT));
-        boolean toIncludesTime = getOptionalBoolean(fields, "toIncludesTime", !to.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Event(description, from, fromIncludesTime, to, toIncludesTime);
+        boolean hasEndTime = getOptionalBoolean(fields, "toIncludesTime",
+                !to.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Event(description, from, hasStartTime, to, hasEndTime);
     }
 
     /** Parses an ISO-8601 date-time stored in the save file. */
@@ -138,14 +140,14 @@ public class Storage {
         if (task instanceof Deadline deadline) {
             json.append(',');
             appendStringField(json, "datetime", deadline.getDateTime().toString());
-            json.append(", \"includesTime\": ").append(deadline.includesTime());
+            json.append(", \"includesTime\": ").append(deadline.hasTime());
         } else if (task instanceof Event event) {
             json.append(',');
             appendStringField(json, "from", event.getFrom().toString());
             json.append(',');
             appendStringField(json, "to", event.getTo().toString());
-            json.append(", \"fromIncludesTime\": ").append(event.fromIncludesTime());
-            json.append(", \"toIncludesTime\": ").append(event.toIncludesTime());
+            json.append(", \"fromIncludesTime\": ").append(event.hasStartTime());
+            json.append(", \"toIncludesTime\": ").append(event.hasEndTime());
         }
         return json.append('}').toString();
     }

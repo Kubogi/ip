@@ -86,7 +86,7 @@ public class Parser {
             throw new MikuException("The due date of a deadline cannot be empty!! \u266b");
         }
         DateTimeParser.ParsedDateTime parsedDeadline = DateTimeParser.parse(deadline);
-        return new Deadline(description, parsedDeadline.value(), parsedDeadline.includesTime());
+        return new Deadline(description, parsedDeadline.value(), parsedDeadline.hasTime());
     }
 
     /** Validates an event command and creates its task. */
@@ -94,7 +94,8 @@ public class Parser {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = fromIndex < 0 ? -1 : command.indexOf(" /to ", fromIndex + " /from ".length());
         if (fromIndex < 0 || toIndex < 0) {
-            throw new MikuException("An event needs a description, a start using /from, and an end using /to !! \u2728");
+            throw new MikuException(
+                    "An event needs a description, a start using /from, and an end using /to !! \u2728");
         }
         String description = command.substring("event".length(), fromIndex).trim();
         String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
@@ -110,7 +111,7 @@ public class Parser {
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        return new Event(description, parsedFrom.value(), parsedFrom.includesTime(),
-                parsedTo.value(), parsedTo.includesTime());
+        return new Event(description, parsedFrom.value(), parsedFrom.hasTime(),
+                parsedTo.value(), parsedTo.hasTime());
     }
 }

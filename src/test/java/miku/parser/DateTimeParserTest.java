@@ -19,7 +19,7 @@ class DateTimeParserTest {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2024-02-29");
 
         assertEquals(LocalDateTime.of(2024, 2, 29, 0, 0), parsed.value());
-        assertFalse(parsed.includesTime());
+        assertFalse(parsed.hasTime());
     }
 
     @Test
@@ -27,7 +27,7 @@ class DateTimeParserTest {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2024-02-29 2359");
 
         assertEquals(LocalDateTime.of(2024, 2, 29, 23, 59), parsed.value());
-        assertTrue(parsed.includesTime());
+        assertTrue(parsed.hasTime());
     }
 
     @Test
@@ -35,7 +35,7 @@ class DateTimeParserTest {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("3/7/2024");
 
         assertEquals(LocalDateTime.of(2024, 7, 3, 0, 0), parsed.value());
-        assertFalse(parsed.includesTime());
+        assertFalse(parsed.hasTime());
     }
 
     @Test
@@ -43,7 +43,7 @@ class DateTimeParserTest {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("3/7/2024 0015");
 
         assertEquals(LocalDateTime.of(2024, 7, 3, 0, 15), parsed.value());
-        assertTrue(parsed.includesTime());
+        assertTrue(parsed.hasTime());
     }
 
     @Test
