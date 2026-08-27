@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /** Runs Miku's command-line task tracker and coordinates command handling. */
@@ -10,7 +9,7 @@ public class Miku {
         Ui ui = new Ui();
         ui.showWelcome();
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        TaskList tasks = new TaskList();
         Storage storage = new Storage();
         while (scanner.hasNextLine()) {
             String trimmedCommand = scanner.nextLine().trim();
@@ -28,7 +27,7 @@ public class Miku {
     }
 
     /** Dispatches one normalized command and returns whether the application should exit. */
-    private static boolean processCommand(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+    private static boolean processCommand(TaskList tasks, Storage storage, Ui ui, String command)
             throws MikuException {
         ui.showSeparator();
         if (command.isEmpty()) {
@@ -49,7 +48,7 @@ public class Miku {
     }
 
     /** Processes a todo command. */
-    private static boolean handleTodo(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+    private static boolean handleTodo(TaskList tasks, Storage storage, Ui ui, String command)
             throws MikuException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
@@ -61,7 +60,7 @@ public class Miku {
     }
 
     /** Processes a deadline command and validates its description and due date. */
-    private static boolean handleDeadline(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+    private static boolean handleDeadline(TaskList tasks, Storage storage, Ui ui, String command)
             throws MikuException {
         int separatorIndex = command.indexOf(" /by ");
         if (separatorIndex < 0) {
@@ -82,7 +81,7 @@ public class Miku {
     }
 
     /** Processes an event command and validates all of its fields. */
-    private static boolean handleEvent(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+    private static boolean handleEvent(TaskList tasks, Storage storage, Ui ui, String command)
             throws MikuException {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = fromIndex < 0 ? -1 : command.indexOf(" /to ", fromIndex + " /from ".length());
@@ -110,7 +109,7 @@ public class Miku {
     }
 
     /** Processes the list command. */
-    private static boolean handleList(ArrayList<Task> tasks, Ui ui, String[] cmdArgs) throws MikuException {
+    private static boolean handleList(TaskList tasks, Ui ui, String[] cmdArgs) throws MikuException {
         requireNoExtraArguments(cmdArgs, "list does not need any parameters!!");
         ui.showTaskList(tasks);
         ui.showSeparator();
@@ -118,7 +117,7 @@ public class Miku {
     }
 
     /** Processes the mark command. */
-    private static boolean handleMark(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleMark(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
             throws MikuException {
         Task task = getTaskFromArguments(tasks, cmdArgs, "mark");
         task.markAsDone();
@@ -129,7 +128,7 @@ public class Miku {
     }
 
     /** Processes the unmark command. */
-    private static boolean handleUnmark(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleUnmark(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
             throws MikuException {
         Task task = getTaskFromArguments(tasks, cmdArgs, "unmark");
         task.markAsNotDone();
@@ -140,7 +139,7 @@ public class Miku {
     }
 
     /** Processes the delete command. */
-    private static boolean handleDelete(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+    private static boolean handleDelete(TaskList tasks, Storage storage, Ui ui, String[] cmdArgs)
             throws MikuException {
         int taskIndex = getTaskIndexFromArguments(tasks, cmdArgs, "delete");
         Task removedTask = tasks.remove(taskIndex);
@@ -159,12 +158,12 @@ public class Miku {
     }
 
     /** Returns the task selected by a mark, unmark, or delete command. */
-    private static Task getTaskFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command) throws MikuException {
+    private static Task getTaskFromArguments(TaskList tasks, String[] cmdArgs, String command) throws MikuException {
         return tasks.get(getTaskIndexFromArguments(tasks, cmdArgs, command));
     }
 
     /** Validates a task-number argument and returns its zero-based list index. */
-    private static int getTaskIndexFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command)
+    private static int getTaskIndexFromArguments(TaskList tasks, String[] cmdArgs, String command)
             throws MikuException {
         if (cmdArgs.length < 2) {
             throw new MikuException("Please provide a task number for " + command + " \u266a");
@@ -192,16 +191,16 @@ public class Miku {
     }
 
     /** Adds a task and prints the confirmation shown after a successful addition. */
-    private static void addTask(ArrayList<Task> tasks, Storage storage, Ui ui, Task task) throws MikuException {
+    private static void addTask(TaskList tasks, Storage storage, Ui ui, Task task) throws MikuException {
         tasks.add(task);
         saveTasks(storage, tasks);
         ui.showTaskAdded(task, tasks.size());
     }
 
     /** Saves task changes and turns an unexpected write failure into a command error. */
-    private static void saveTasks(Storage storage, ArrayList<Task> tasks) throws MikuException {
+    private static void saveTasks(Storage storage, TaskList tasks) throws MikuException {
         try {
-            storage.saveTasks(tasks);
+            storage.saveTasks(tasks.asList());
         } catch (IOException exception) {
             throw new MikuException("Miku could not save your tasks right now. Please try again.");
         }

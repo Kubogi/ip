@@ -2,7 +2,6 @@ import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /** Handles all command-line input/output presentation for Miku. */
 public class Ui {
@@ -24,7 +23,7 @@ public class Ui {
     }
 
     /** Displays the current task list. */
-    public void showTaskList(List<Task> tasks) {
+    public void showTaskList(TaskList tasks) {
         System.out.println("Here are the tasks in your list \u266b");
         for (int index = 0; index < tasks.size(); index++) {
             System.out.println(index + 1 + "." + tasks.get(index));
