@@ -17,6 +17,7 @@ runtime dependencies in this file, so no separate classpath is needed. ★
 * deadline <description> /by <date or time> creates a task with a due date or time.
 * event <description> /from <start> /to <end> creates a task with a start and end date or time.
 * list displays all tasks.
+* find <keyword> displays tasks whose descriptions contain the keyword, ignoring letter case.
 * mark <number> and unmark <number> update completion status.
 * delete <number> removes the selected task from the list.
 * bye exits the application.

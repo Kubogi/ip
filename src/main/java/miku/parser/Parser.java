@@ -5,6 +5,7 @@ import miku.command.AddCommand;
 import miku.command.Command;
 import miku.command.DeleteCommand;
 import miku.command.ExitCommand;
+import miku.command.FindCommand;
 import miku.command.ListCommand;
 import miku.command.MarkCommand;
 import miku.command.UnmarkCommand;
@@ -30,6 +31,7 @@ public class Parser {
             requireNoExtraArguments(arguments, "list does not need any parameters!!");
             yield new ListCommand();
         }
+        case "find" -> new FindCommand(parseFindKeyword(command));
         case "mark" -> new MarkCommand(parseTaskNumber(arguments, "mark"));
         case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments, "unmark"));
         case "delete" -> new DeleteCommand(parseTaskNumber(arguments, "delete"));
@@ -60,6 +62,15 @@ public class Parser {
         if (arguments.length > 1) {
             throw new MikuException(message);
         }
+    }
+
+    /** Validates and returns the keyword that Miku should search for in task descriptions. */
+    private String parseFindKeyword(String command) throws MikuException {
+        String keyword = command.substring("find".length()).trim();
+        if (keyword.isEmpty()) {
+            throw new MikuException("Please give Miku a keyword to find \u266a");
+        }
+        return keyword;
     }
 
     /** Validates a todo command and creates its task. */

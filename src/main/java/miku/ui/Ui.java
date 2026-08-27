@@ -4,6 +4,7 @@ import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -54,6 +55,14 @@ public class Ui {
         System.out.println("Here are the tasks in your list \u266b");
         for (int index = 0; index < tasks.size(); index++) {
             System.out.println(index + 1 + "." + tasks.get(index));
+        }
+    }
+
+    /** Displays tasks whose descriptions match a user's find keyword. */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        System.out.println("Here are the matching tasks Miku found \u266a");
+        for (int index = 0; index < matchingTasks.size(); index++) {
+            System.out.println(index + 1 + "." + matchingTasks.get(index));
         }
     }
 
