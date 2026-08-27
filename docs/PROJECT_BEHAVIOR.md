@@ -14,13 +14,20 @@ Miku emits user-facing text as UTF-8. When launching from an IDE or shell, confi
 * delete <number> removes the selected task from the list.
 * bye exits the application.
 
-Date and time values are currently retained as user-provided strings.
+Dates use `yyyy-MM-dd` (for example, `2019-10-15`) or `d/M/yyyy` (for example,
+`2/12/2019`) and may include a 24-hour time as `yyyy-MM-dd HHmm` or
+`d/M/yyyy HHmm` (for example, `2019-12-02 1800` or `2/12/2019 1800`). Dates are stored
+as `LocalDateTime`; date-only values use midnight internally and display without
+that implied time. Invalid or impossible dates and times are rejected. Miku
+displays dates as `MMM dd yyyy` and date-times as `MMM dd yyyy h:mm a`, such as
+`Dec 02 2019 6:00 PM`.
 
 ## Persistence
 
 Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON.
 Each task object uses its code field names: `type`, `description`, `isDone`, plus
-`datetime` for deadlines or `from` and `to` for events. Loading saved tasks at
+`datetime` for deadlines or `from` and `to` for events. Date values are saved
+in ISO-8601 `LocalDateTime` form. Loading saved tasks at
 startup is not implemented yet.
 
 * Empty commands, unknown commands, missing parameters, invalid task numbers, and empty task fields display a Miku-style error message. The application then continues reading input.
@@ -45,5 +52,7 @@ Miku's user-facing messages should be warm, energetic, and use cheerful symbols 
 * src/main/java/Deadline.java — Deadline task type.
 * src/main/java/Event.java — Event task type.
 * test/ui-test-plan.md — black-box UI test cases.
+
+* src/main/java/DateTimeParser.java — strict date parsing and display formatting.
 
 Update this document when commands, formats, or user-facing behavior change.
