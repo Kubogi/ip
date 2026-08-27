@@ -2,6 +2,7 @@ package miku.task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** Owns Miku's ordered collection of tasks and its basic list operations. */
 public class TaskList {
@@ -40,5 +41,13 @@ public class TaskList {
     /** Returns an immutable snapshot for collaborators that only need to read tasks. */
     public List<Task> asList() {
         return List.copyOf(tasks);
+    }
+
+    /** Returns tasks whose descriptions contain the given keyword, regardless of letter case. */
+    public List<Task> findByDescription(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase(Locale.ROOT);
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase(Locale.ROOT).contains(normalizedKeyword))
+                .toList();
     }
 }

@@ -71,6 +71,51 @@ Bye bye! Miku hopes to see you again soon! ✨
 ____________________________________________________________
 ```
 
+## Test case: Find tasks by description keyword
+
+Aim: Verify that `find` returns case-insensitive description matches without changing the list.
+
+### Inputs
+```text
+todo read book
+deadline return BOOK /by 6/6/2026
+todo buy groceries
+find book
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+z
+Hello! I'm Hatsune Miku ♪
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it! I've added this task for you ✨
+[T][ ] read book
+Now you have 1 task(s) in the list! ☆
+____________________________________________________________
+____________________________________________________________
+Got it! I've added this task for you ✨
+[D][ ] return BOOK (by: Jun 06 2026)
+Now you have 2 task(s) in the list! ☆
+____________________________________________________________
+____________________________________________________________
+Got it! I've added this task for you ✨
+[T][ ] buy groceries
+Now you have 3 task(s) in the list! ☆
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks Miku found ♪
+1.[T][ ] read book
+2.[D][ ] return BOOK (by: Jun 06 2026)
+____________________________________________________________
+____________________________________________________________
+Bye bye! Miku hopes to see you again soon! ✨
+____________________________________________________________
+```
+
 ## Test case: Add scheduled tasks with dates
 
 Aim: Verify that date-only and date-time values are parsed, stored, and displayed.
