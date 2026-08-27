@@ -26,6 +26,7 @@ public class Deadline extends Task {
         return includesTime;
     }
 
+    /** Returns this deadline in Miku's task-list display format. */
     @Override
     public String toString() {
         return super.toString() + " (by: " + DateTimeParser.format(dateTime, includesTime) + ")";
