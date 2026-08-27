@@ -46,6 +46,8 @@ Miku's user-facing messages should be warm, energetic, and use cheerful symbols 
 
 ## Important files
 
+* src/main/java/Ui.java - command-line messages, task displays, and UTF-8 console configuration.
+
 * src/main/java/Miku.java — command parsing, task storage, and interaction.
 * src/main/java/Task.java — abstract task base class and completion state.
 * src/main/java/Todo.java — Todo task type.

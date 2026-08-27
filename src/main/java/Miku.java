@@ -1,19 +1,14 @@
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /** Runs Miku's command-line task tracker and coordinates command handling. */
 public class Miku {
-    private static final String SEPARATOR = "____________________________________________________________";
-
     /** Starts Miku and continues reading commands until the user says goodbye or input ends. */
     public static void main(String[] args) {
-        configureUtf8Output();
-        printWelcomeMessage();
+        Ui.configureUtf8Output();
+        Ui ui = new Ui();
+        ui.showWelcome();
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> tasks = new ArrayList<>();
         Storage storage = new Storage();
@@ -21,9 +16,9 @@ public class Miku {
             String trimmedCommand = scanner.nextLine().trim();
             boolean shouldExit;
             try {
-                shouldExit = processCommand(tasks, storage, trimmedCommand);
+                shouldExit = processCommand(tasks, storage, ui, trimmedCommand);
             } catch (MikuException exception) {
-                printError(exception.getMessage());
+                ui.showError(exception.getMessage());
                 continue;
             }
             if (shouldExit) {
@@ -32,140 +27,134 @@ public class Miku {
         }
     }
 
-    /** Ensures Miku symbols are emitted as UTF-8 on Windows Cp1252 consoles. */
-    private static void configureUtf8Output() {
-        System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8));
-        System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err), true, StandardCharsets.UTF_8));
-    }
-
     /** Dispatches one normalized command and returns whether the application should exit. */
-    private static boolean processCommand(ArrayList<Task> tasks, Storage storage, String command) throws MikuException {
-        System.out.println(SEPARATOR);
+    private static boolean processCommand(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+            throws MikuException {
+        ui.showSeparator();
         if (command.isEmpty()) {
-            throw new MikuException("The command cannot be empty. Please tell Miku what to do ♪");
+            throw new MikuException("The command cannot be empty. Please tell Miku what to do \u266a");
         }
         String[] cmdArgs = command.split("\\s+");
         return switch (cmdArgs[0]) {
-        case "bye" -> handleBye(cmdArgs);
-        case "list" -> handleList(tasks, cmdArgs);
-        case "mark" -> handleMark(tasks, storage, cmdArgs);
-        case "unmark" -> handleUnmark(tasks, storage, cmdArgs);
-        case "delete" -> handleDelete(tasks, storage, cmdArgs);
-        case "todo" -> handleTodo(tasks, storage, command);
-        case "deadline" -> handleDeadline(tasks, storage, command);
-        case "event" -> handleEvent(tasks, storage, command);
+        case "bye" -> handleBye(ui, cmdArgs);
+        case "list" -> handleList(tasks, ui, cmdArgs);
+        case "mark" -> handleMark(tasks, storage, ui, cmdArgs);
+        case "unmark" -> handleUnmark(tasks, storage, ui, cmdArgs);
+        case "delete" -> handleDelete(tasks, storage, ui, cmdArgs);
+        case "todo" -> handleTodo(tasks, storage, ui, command);
+        case "deadline" -> handleDeadline(tasks, storage, ui, command);
+        case "event" -> handleEvent(tasks, storage, ui, command);
         default -> throw new MikuException("I'm sorry, but Miku doesn't know what that means :-(");
         };
     }
 
     /** Processes a todo command. */
-    private static boolean handleTodo(ArrayList<Task> tasks, Storage storage, String command) throws MikuException {
+    private static boolean handleTodo(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+            throws MikuException {
         String description = command.substring("todo".length()).trim();
         if (description.isEmpty()) {
-            throw new MikuException("The description of a todo cannot be empty!! ♪");
+            throw new MikuException("The description of a todo cannot be empty!! \u266a");
         }
-        addTask(tasks, storage, new Todo(description));
-        finishCommand();
+        addTask(tasks, storage, ui, new Todo(description));
+        ui.showSeparator();
         return false;
     }
 
     /** Processes a deadline command and validates its description and due date. */
-    private static boolean handleDeadline(ArrayList<Task> tasks, Storage storage, String command) throws MikuException {
+    private static boolean handleDeadline(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+            throws MikuException {
         int separatorIndex = command.indexOf(" /by ");
         if (separatorIndex < 0) {
-            throw new MikuException("A deadline needs a description and a due date using /by !! ♫");
+            throw new MikuException("A deadline needs a description and a due date using /by !! \u266b");
         }
         String description = command.substring("deadline".length(), separatorIndex).trim();
         String deadline = command.substring(separatorIndex + " /by ".length()).trim();
         if (description.isEmpty()) {
-            throw new MikuException("The description of a deadline cannot be empty!! ♪");
+            throw new MikuException("The description of a deadline cannot be empty!! \u266a");
         }
         if (deadline.isEmpty()) {
-            throw new MikuException("The due date of a deadline cannot be empty!! ♫");
+            throw new MikuException("The due date of a deadline cannot be empty!! \u266b");
         }
         DateTimeParser.ParsedDateTime parsedDeadline = DateTimeParser.parse(deadline);
-        addTask(tasks, storage, new Deadline(description, parsedDeadline.value(), parsedDeadline.includesTime()));
-        finishCommand();
+        addTask(tasks, storage, ui, new Deadline(description, parsedDeadline.value(), parsedDeadline.includesTime()));
+        ui.showSeparator();
         return false;
     }
 
     /** Processes an event command and validates all of its fields. */
-    private static boolean handleEvent(ArrayList<Task> tasks, Storage storage, String command) throws MikuException {
+    private static boolean handleEvent(ArrayList<Task> tasks, Storage storage, Ui ui, String command)
+            throws MikuException {
         int fromIndex = command.indexOf(" /from ");
         int toIndex = fromIndex < 0 ? -1 : command.indexOf(" /to ", fromIndex + " /from ".length());
         if (fromIndex < 0 || toIndex < 0) {
-            throw new MikuException("An event needs a description, a start using /from, and an end using /to !! ✨");
+            throw new MikuException("An event needs a description, a start using /from, and an end using /to !! \u2728");
         }
         String description = command.substring("event".length(), fromIndex).trim();
         String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = command.substring(toIndex + " /to ".length()).trim();
         if (description.isEmpty()) {
-            throw new MikuException("The description of an event cannot be empty!! ♪");
+            throw new MikuException("The description of an event cannot be empty!! \u266a");
         }
         if (from.isEmpty()) {
-            throw new MikuException("The start of an event cannot be empty!! ♫");
+            throw new MikuException("The start of an event cannot be empty!! \u266b");
         }
         if (to.isEmpty()) {
-            throw new MikuException("The end of an event cannot be empty!! ✨");
+            throw new MikuException("The end of an event cannot be empty!! \u2728");
         }
         DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
         DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        addTask(tasks, storage, new Event(description, parsedFrom.value(), parsedFrom.includesTime(),
+        addTask(tasks, storage, ui, new Event(description, parsedFrom.value(), parsedFrom.includesTime(),
                 parsedTo.value(), parsedTo.includesTime()));
-        finishCommand();
+        ui.showSeparator();
         return false;
     }
 
     /** Processes the list command. */
-    private static boolean handleList(ArrayList<Task> tasks, String[] cmdArgs) throws MikuException {
+    private static boolean handleList(ArrayList<Task> tasks, Ui ui, String[] cmdArgs) throws MikuException {
         requireNoExtraArguments(cmdArgs, "list does not need any parameters!!");
-        System.out.println("Here are the tasks in your list ♫");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(i + 1 + "." + tasks.get(i));
-        }
-        finishCommand();
+        ui.showTaskList(tasks);
+        ui.showSeparator();
         return false;
     }
 
     /** Processes the mark command. */
-    private static boolean handleMark(ArrayList<Task> tasks, Storage storage, String[] cmdArgs) throws MikuException {
+    private static boolean handleMark(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+            throws MikuException {
         Task task = getTaskFromArguments(tasks, cmdArgs, "mark");
         task.markAsDone();
         saveTasks(storage, tasks);
-        System.out.println("Okay ★ I've marked this task as done!");
-        System.out.println(task);
-        finishCommand();
+        ui.showTaskMarked(task);
+        ui.showSeparator();
         return false;
     }
 
     /** Processes the unmark command. */
-    private static boolean handleUnmark(ArrayList<Task> tasks, Storage storage, String[] cmdArgs) throws MikuException {
+    private static boolean handleUnmark(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+            throws MikuException {
         Task task = getTaskFromArguments(tasks, cmdArgs, "unmark");
         task.markAsNotDone();
         saveTasks(storage, tasks);
-        System.out.println("Oops... I've marked this task as not done yet ♪");
-        System.out.println(task);
-        finishCommand();
+        ui.showTaskUnmarked(task);
+        ui.showSeparator();
         return false;
     }
 
     /** Processes the delete command. */
-    private static boolean handleDelete(ArrayList<Task> tasks, Storage storage, String[] cmdArgs) throws MikuException {
+    private static boolean handleDelete(ArrayList<Task> tasks, Storage storage, Ui ui, String[] cmdArgs)
+            throws MikuException {
         int taskIndex = getTaskIndexFromArguments(tasks, cmdArgs, "delete");
         Task removedTask = tasks.remove(taskIndex);
         saveTasks(storage, tasks);
-        System.out.println("Noted ♪ I've removed this task for you!");
-        System.out.println(removedTask);
-        System.out.println("Now you have " + tasks.size() + " task(s) in the list! ☆");
-        finishCommand();
+        ui.showTaskDeleted(removedTask, tasks.size());
+        ui.showSeparator();
         return false;
     }
 
     /** Processes the bye command. */
-    private static boolean handleBye(String[] cmdArgs) throws MikuException {
+    private static boolean handleBye(Ui ui, String[] cmdArgs) throws MikuException {
         requireNoExtraArguments(cmdArgs, "bye does not need any parameters!!");
-        System.out.println("Bye bye! Miku hopes to see you again soon! ✨");
-        finishCommand();
+        ui.showGoodbye();
+        ui.showSeparator();
         return true;
     }
 
@@ -178,19 +167,19 @@ public class Miku {
     private static int getTaskIndexFromArguments(ArrayList<Task> tasks, String[] cmdArgs, String command)
             throws MikuException {
         if (cmdArgs.length < 2) {
-            throw new MikuException("Please provide a task number for " + command + " ♪");
+            throw new MikuException("Please provide a task number for " + command + " \u266a");
         }
         if (cmdArgs.length > 2) {
-            throw new MikuException("Only one task number is needed for " + command + " ♫");
+            throw new MikuException("Only one task number is needed for " + command + " \u266b");
         }
         int taskNumber;
         try {
             taskNumber = Integer.parseInt(cmdArgs[1]);
         } catch (NumberFormatException exception) {
-            throw new MikuException("The task number must be a whole number!! ♫");
+            throw new MikuException("The task number must be a whole number!! \u266b");
         }
         if (taskNumber < 1 || taskNumber > tasks.size()) {
-            throw new MikuException("That task number is not in Miku's list!! ✨");
+            throw new MikuException("That task number is not in Miku's list!! \u2728");
         }
         return taskNumber - 1;
     }
@@ -203,12 +192,10 @@ public class Miku {
     }
 
     /** Adds a task and prints the confirmation shown after a successful addition. */
-    private static void addTask(ArrayList<Task> tasks, Storage storage, Task task) throws MikuException {
+    private static void addTask(ArrayList<Task> tasks, Storage storage, Ui ui, Task task) throws MikuException {
         tasks.add(task);
         saveTasks(storage, tasks);
-        System.out.println("Got it! I've added this task for you ✨");
-        System.out.println(task);
-        System.out.println("Now you have " + tasks.size() + " task(s) in the list! ☆");
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /** Saves task changes and turns an unexpected write failure into a command error. */
@@ -218,25 +205,5 @@ public class Miku {
         } catch (IOException exception) {
             throw new MikuException("Miku could not save your tasks right now. Please try again.");
         }
-    }
-
-    /** Prints the separator after a successfully processed command. */
-    private static void finishCommand() {
-        System.out.println(SEPARATOR);
-    }
-
-    /** Prints an input error in Miku's consistent friendly format. */
-    private static void printError(String message) {
-        System.out.println(" OOPS!!! " + message);
-        System.out.println(SEPARATOR);
-    }
-
-    /** Prints Miku's welcome banner. */
-    private static void printWelcomeMessage() {
-        System.out.println(SEPARATOR);
-        System.out.println("z");
-        System.out.println("Hello! I'm Hatsune Miku ♪");
-        System.out.println("What can I do for you?");
-        System.out.println(SEPARATOR);
     }
 }
