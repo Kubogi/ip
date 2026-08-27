@@ -15,6 +15,7 @@ public class AddCommand extends Command {
         this.task = task;
     }
 
+    /** Adds the task, persists the updated list, and reports the result. */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws MikuException {
         tasks.add(task);
