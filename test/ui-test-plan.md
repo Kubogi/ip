@@ -35,6 +35,74 @@ Bye bye! Miku hopes to see you again soon! ✨
 ____________________________________________________________
 ```
 
+## Test case: Add scheduled tasks with dates
+
+Aim: Verify that date-only and date-time values are parsed, stored, and displayed.
+
+### Inputs
+```text
+deadline return book /by 2/12/2019 1800
+event study /from 2019-10-15 /to 2019-10-15 0930
+list
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+z
+Hello! I'm Hatsune Miku ♪
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it! I've added this task for you ✨
+[D][ ] return book (by: Dec 02 2019 6:00 PM)
+Now you have 1 task(s) in the list! ☆
+____________________________________________________________
+____________________________________________________________
+Got it! I've added this task for you ✨
+[E][ ] study (from: Oct 15 2019 to: Oct 15 2019 9:30 AM)
+Now you have 2 task(s) in the list! ☆
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list ♫
+1.[D][ ] return book (by: Dec 02 2019 6:00 PM)
+2.[E][ ] study (from: Oct 15 2019 to: Oct 15 2019 9:30 AM)
+____________________________________________________________
+____________________________________________________________
+Bye bye! Miku hopes to see you again soon! ✨
+____________________________________________________________
+```
+
+## Test case: Reject invalid scheduled date
+
+Aim: Verify that an impossible date is rejected without adding a task.
+
+### Inputs
+```text
+deadline return book /by 2019-02-29
+list
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+z
+Hello! I'm Hatsune Miku ♪
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+ OOPS!!! Please use yyyy-MM-dd or d/M/yyyy, optionally followed by HHmm (24-hour time) ♪
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list ♫
+____________________________________________________________
+____________________________________________________________
+Bye bye! Miku hopes to see you again soon! ✨
+____________________________________________________________
+```
+
 ## Test case: Mark a task as done
 
 Aim: Verify that `mark <number>` changes the selected task to done.
@@ -128,7 +196,7 @@ Aim: Verify that `delete <number>` removes the selected task and reports the upd
 ### Inputs
 ```text
 todo read book
-event project meeting /from Aug 6th 2pm /to 4pm
+event project meeting /from 2026-08-06 1400 /to 2026-08-06 1600
 delete 2
 list
 bye
@@ -148,12 +216,12 @@ Now you have 1 task(s) in the list! ☆
 ____________________________________________________________
 ____________________________________________________________
 Got it! I've added this task for you ✨
-[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+[E][ ] project meeting (from: Aug 06 2026 2:00 PM to: Aug 06 2026 4:00 PM)
 Now you have 2 task(s) in the list! ☆
 ____________________________________________________________
 ____________________________________________________________
 Noted ♪ I've removed this task for you!
-[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+[E][ ] project meeting (from: Aug 06 2026 2:00 PM to: Aug 06 2026 4:00 PM)
 Now you have 1 task(s) in the list! ☆
 ____________________________________________________________
 ____________________________________________________________

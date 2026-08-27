@@ -83,7 +83,8 @@ public class Miku {
         if (deadline.isEmpty()) {
             throw new MikuException("The due date of a deadline cannot be empty!! ♫");
         }
-        addTask(tasks, storage, new Deadline(description, deadline));
+        DateTimeParser.ParsedDateTime parsedDeadline = DateTimeParser.parse(deadline);
+        addTask(tasks, storage, new Deadline(description, parsedDeadline.value(), parsedDeadline.includesTime()));
         finishCommand();
         return false;
     }
@@ -107,7 +108,10 @@ public class Miku {
         if (to.isEmpty()) {
             throw new MikuException("The end of an event cannot be empty!! ✨");
         }
-        addTask(tasks, storage, new Event(description, from, to));
+        DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
+        DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
+        addTask(tasks, storage, new Event(description, parsedFrom.value(), parsedFrom.includesTime(),
+                parsedTo.value(), parsedTo.includesTime()));
         finishCommand();
         return false;
     }

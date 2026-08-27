@@ -36,12 +36,12 @@ public class Storage {
         json.append(", \"isDone\": ").append(task.isDone);
         if (task instanceof Deadline deadline) {
             json.append(',');
-            appendStringField(json, "datetime", deadline.getDatetime());
+            appendStringField(json, "datetime", deadline.getDateTime().toString());
         } else if (task instanceof Event event) {
             json.append(',');
-            appendStringField(json, "from", event.getFrom());
+            appendStringField(json, "from", event.getFrom().toString());
             json.append(',');
-            appendStringField(json, "to", event.getTo());
+            appendStringField(json, "to", event.getTo().toString());
         }
         return json.append('}').toString();
     }
