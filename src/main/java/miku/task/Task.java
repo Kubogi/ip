@@ -1,3 +1,5 @@
+package miku.task;
+
 /** Represents the common information and behaviour shared by all tasks. */
 public abstract class Task {
     protected String type;
@@ -34,6 +36,16 @@ public abstract class Task {
     /** Returns this task's description. */
     public String getDescription() {
         return description;
+    }
+
+    /** Returns this task's type marker. */
+    public String getType() {
+        return type;
+    }
+
+    /** Returns whether this task has been completed. */
+    public boolean isDone() {
+        return isDone;
     }
 
     @Override

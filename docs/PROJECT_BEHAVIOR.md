@@ -47,18 +47,13 @@ Miku's user-facing messages should be warm, energetic, and use cheerful symbols 
 
 ## Important files
 
-* src/main/java/Ui.java - command-line messages, task displays, and UTF-8 console configuration.
-* src/main/java/TaskList.java - task-list ownership, lookup, addition, removal, and counting.
-* src/main/java/Parser.java - command recognition and task-field validation.
-* src/main/java/Command.java and its subclasses - executable command actions.
+* src/main/java/miku/Miku.java - application entry point and coordination.
+* src/main/java/miku/command/ - executable command actions.
+* src/main/java/miku/parser/ - command recognition and date/time parsing.
+* src/main/java/miku/storage/ - JSON task persistence.
+* src/main/java/miku/task/ - task types and task-list ownership.
+* src/main/java/miku/ui/ - command-line messages and displays.
 
-* src/main/java/Miku.java — command parsing, task storage, and interaction.
-* src/main/java/Task.java — abstract task base class and completion state.
-* src/main/java/Todo.java — Todo task type.
-* src/main/java/Deadline.java — Deadline task type.
-* src/main/java/Event.java — Event task type.
 * test/ui-test-plan.md — black-box UI test cases.
-
-* src/main/java/DateTimeParser.java — strict date parsing and display formatting.
 
 Update this document when commands, formats, or user-facing behavior change.

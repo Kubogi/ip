@@ -29,6 +29,10 @@ The sample output is illustrative only. Output formatting and command/display fo
 
 Current commands, datetime formats, display conventions, important files, and behavior details are documented in docs/PROJECT_BEHAVIOR.md. Keep that document updated whenever these details change.
 
+# Source organization
+
+Place new Java source files in the existing `miku.*` package structure. Group files by responsibility (for example, `miku.command`, `miku.task`, `miku.parser`, `miku.storage`, or `miku.ui`) instead of adding files directly under `src/main/java`.
+
 # Miku presentation style
 
 Keep the project cheerful and idol-like, using symbols such as ★, ☆, ♪, ♫, and ✨ in user-facing messages and suitable documentation. Use symbols meaningfully and preserve readability.

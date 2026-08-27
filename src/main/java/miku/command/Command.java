@@ -1,4 +1,11 @@
+package miku.command;
+
 import java.io.IOException;
+
+import miku.MikuException;
+import miku.storage.Storage;
+import miku.task.TaskList;
+import miku.ui.Ui;
 
 /** Represents an executable user request in Miku's command-line task tracker. */
 public abstract class Command {

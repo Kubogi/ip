@@ -1,5 +1,13 @@
+package miku;
+
 import java.io.IOException;
 import java.util.Scanner;
+
+import miku.command.Command;
+import miku.parser.Parser;
+import miku.storage.Storage;
+import miku.task.TaskList;
+import miku.ui.Ui;
 
 /** Runs Miku's command-line task tracker and coordinates command execution. */
 public class Miku {

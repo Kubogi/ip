@@ -1,3 +1,18 @@
+package miku.parser;
+
+import miku.MikuException;
+import miku.command.AddCommand;
+import miku.command.Command;
+import miku.command.DeleteCommand;
+import miku.command.ExitCommand;
+import miku.command.ListCommand;
+import miku.command.MarkCommand;
+import miku.command.UnmarkCommand;
+import miku.task.Deadline;
+import miku.task.Event;
+import miku.task.Task;
+import miku.task.Todo;
+
 /** Converts raw user input into executable Miku commands. */
 public class Parser {
     /** Parses one normalized user command. */

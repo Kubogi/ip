@@ -28,7 +28,7 @@ def main() -> int:
                 save_file = Path(temporary_directory, "data", "miku.json")
                 save_file.parent.mkdir()
                 save_file.write_text(case["saved"] + "\n", encoding="utf-8")
-            result = subprocess.run(["java", "-cp", str(Path("out").resolve()), "Miku"], input=console_input,
+            result = subprocess.run(["java", "-cp", str(Path("out").resolve()), "miku.Miku"], input=console_input,
                                     text=True, encoding="utf-8", capture_output=True, check=False,
                                     cwd=temporary_directory)
         actual = result.stdout.rstrip("\n")

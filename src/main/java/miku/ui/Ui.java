@@ -1,7 +1,12 @@
+package miku.ui;
+
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+
+import miku.task.Task;
+import miku.task.TaskList;
 
 /** Handles all command-line input/output presentation for Miku. */
 public class Ui {

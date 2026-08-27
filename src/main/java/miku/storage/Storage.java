@@ -1,3 +1,5 @@
+package miku.storage;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -8,6 +10,12 @@ import java.util.Map;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import miku.MikuException;
+import miku.task.Deadline;
+import miku.task.Event;
+import miku.task.Task;
+import miku.task.Todo;
 
 /** Loads and saves Miku's task list as JSON in a local data file. */
 public class Storage {
@@ -123,10 +131,10 @@ public class Storage {
     /** Converts one task to JSON, including only fields that belong to its type. */
     private String toJson(Task task) {
         StringBuilder json = new StringBuilder("{");
-        appendStringField(json, "type", task.type);
+        appendStringField(json, "type", task.getType());
         json.append(',');
-        appendStringField(json, "description", task.description);
-        json.append(", \"isDone\": ").append(task.isDone);
+        appendStringField(json, "description", task.getDescription());
+        json.append(", \"isDone\": ").append(task.isDone());
         if (task instanceof Deadline deadline) {
             json.append(',');
             appendStringField(json, "datetime", deadline.getDateTime().toString());

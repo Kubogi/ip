@@ -1,3 +1,9 @@
+package miku.command;
+
+import miku.MikuException;
+import miku.task.Task;
+import miku.task.TaskList;
+
 /** Provides shared task-number lookup for commands that act on one task. */
 public abstract class TaskNumberCommand extends Command {
     private final int taskNumber;
