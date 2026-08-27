@@ -13,6 +13,7 @@ public class DeleteCommand extends TaskNumberCommand {
         super(taskNumber);
     }
 
+    /** Removes the selected task, persists the updated list, and reports the result. */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws MikuException {
         Task removedTask = tasks.remove(getTaskIndex(tasks));
