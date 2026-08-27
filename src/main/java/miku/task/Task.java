@@ -48,6 +48,7 @@ public abstract class Task {
         return isDone;
     }
 
+    /** Returns this task in Miku's task-list display format. */
     @Override
     public String toString() {
         return "[" + type + "][" + getStatusIcon() + "] " + description;
