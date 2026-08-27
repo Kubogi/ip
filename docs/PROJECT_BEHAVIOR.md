@@ -15,6 +15,14 @@ Miku emits user-facing text as UTF-8. When launching from an IDE or shell, confi
 * bye exits the application.
 
 Date and time values are currently retained as user-provided strings.
+
+## Persistence
+
+Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON.
+Each task object uses its code field names: `type`, `description`, `isDone`, plus
+`datetime` for deadlines or `from` and `to` for events. Loading saved tasks at
+startup is not implemented yet.
+
 * Empty commands, unknown commands, missing parameters, invalid task numbers, and empty task fields display a Miku-style error message. The application then continues reading input.
 
 ## Display conventions
