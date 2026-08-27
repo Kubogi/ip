@@ -41,6 +41,7 @@ public class Event extends Task {
         return toIncludesTime;
     }
 
+    /** Returns this event in Miku's task-list display format. */
     @Override
     public String toString() {
         return super.toString() + " (from: " + DateTimeParser.format(from, fromIncludesTime)
