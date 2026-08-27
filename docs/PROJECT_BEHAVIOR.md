@@ -4,6 +4,13 @@ Miku is a command-line Java 25 task tracker with a cheerful, idol-like personali
 
 Miku emits user-facing text as UTF-8. When launching from an IDE or shell, configure stdout and stderr as UTF-8 if the terminal does not detect it automatically (for example, `-Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8`).
 
+## Distribution JAR
+
+Run `./gradlew shadowJar` on macOS/Linux or `gradlew.bat shadowJar` on Windows
+with Java 25 to create the self-contained runnable JAR at `build/libs/miku.jar`.
+Launch it with `java -jar build/libs/miku.jar`. The Shadow plugin includes Miku's
+runtime dependencies in this file, so no separate classpath is needed. ★
+
 ## Commands
 
 * todo <description> creates a task without a date or time.

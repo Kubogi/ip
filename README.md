@@ -2,6 +2,26 @@
 
 This is a project template for a greenfield Java project. It is named _Miku_. Given below are instructions on how to use it.
 
+## Building and running the fat JAR
+
+Miku uses the Shadow Gradle plugin to package the application and all runtime
+dependencies into a single runnable JAR. Ensure Gradle uses JDK 25, then run:
+
+```powershell
+.\\gradlew.bat shadowJar
+```
+
+The generated file is `build/libs/miku.jar`. Run it from the project directory
+with:
+
+```powershell
+java -jar build/libs/miku.jar
+```
+
+On macOS or Linux, use `./gradlew shadowJar` to build it. The JAR is self-contained,
+so it can also be copied elsewhere and run with `java -jar miku.jar` on a machine
+with Java 25 installed. ☆
+
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.

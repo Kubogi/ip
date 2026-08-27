@@ -37,7 +37,7 @@ test {
 }
 
 application {
-    mainClass = 'seedu.duke.Duke'
+    mainClass = 'miku.Miku'
 }
 
 jar {
@@ -48,7 +48,8 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    // Bundle Miku and all runtime dependencies into one runnable distribution JAR.
+    archiveFileName = 'miku.jar'
 }
 
 run {
