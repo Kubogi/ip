@@ -3,6 +3,42 @@
 Each case is an independent process and must run with Java 25. Expected output
 is compared exactly, apart from a final newline difference.
 
+## Test case: Load saved tasks
+
+Aim: Verify that a previously saved task is restored when Miku starts.
+
+### Saved tasks
+```json
+[
+  {"type": "T", "description": "saved task", "isDone": false},
+  {"type": "D", "description": "saved deadline", "isDone": false,
+   "datetime": "2019-12-02T18:00", "includesTime": true}
+]
+```
+
+### Inputs
+```text
+list
+bye
+```
+
+### Expected output
+```text
+____________________________________________________________
+z
+Hello! I'm Hatsune Miku ♪
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list ♫
+1.[T][ ] saved task
+2.[D][ ] saved deadline (by: Dec 02 2019 6:00 PM)
+____________________________________________________________
+____________________________________________________________
+Bye bye! Miku hopes to see you again soon! ✨
+____________________________________________________________
+```
+
 ## Test case: Add and list tasks
 
 Aim: Verify that a todo is added and displayed by `list`.

@@ -4,11 +4,12 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 
 
 PLAN = Path("test/ui-test-plan.md")
 CASE_PATTERN = re.compile(
-    r"## Test case: (?P<name>.+?)\n.*?### Inputs\n```text\n(?P<input>.*?)\n```"
+    r"## Test case: (?P<name>.+?)\n.*?(?:### Saved tasks\n```json\n(?P<saved>.*?)\n```\n\n)?### Inputs\n```text\n(?P<input>.*?)\n```"
     r"\n\n### Expected output\n```text\n(?P<expected>.*?)\n```", re.DOTALL)
 
 
@@ -22,8 +23,14 @@ def main() -> int:
     for case in cases:
         console_input = case["input"] + "\n"
         expected = case["expected"].rstrip("\n")
-        result = subprocess.run(["java", "-cp", "out", "Miku"], input=console_input,
-                                text=True, encoding="utf-8", capture_output=True, check=False)
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            if case["saved"]:
+                save_file = Path(temporary_directory, "data", "miku.json")
+                save_file.parent.mkdir()
+                save_file.write_text(case["saved"] + "\n", encoding="utf-8")
+            result = subprocess.run(["java", "-cp", str(Path("out").resolve()), "Miku"], input=console_input,
+                                    text=True, encoding="utf-8", capture_output=True, check=False,
+                                    cwd=temporary_directory)
         actual = result.stdout.rstrip("\n")
         print(f"Test case: {case['name']}\nConsole input:\n{console_input}Actual output:\n{actual}\nExpected output:\n{expected}")
         if result.returncode != 0 or actual != expected:

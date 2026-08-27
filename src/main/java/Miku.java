@@ -10,8 +10,8 @@ public class Miku {
         Parser parser = new Parser();
         ui.showWelcome();
         Scanner scanner = new Scanner(System.in);
-        TaskList tasks = new TaskList();
         Storage storage = new Storage();
+        TaskList tasks = loadTasks(storage, ui);
         while (scanner.hasNextLine()) {
             boolean shouldExit;
             try {
@@ -23,6 +23,16 @@ public class Miku {
             if (shouldExit) {
                 break;
             }
+        }
+    }
+
+    /** Loads persisted tasks and starts with an empty list if the save data is unavailable or invalid. */
+    private static TaskList loadTasks(Storage storage, Ui ui) {
+        try {
+            return new TaskList(storage.loadTasks());
+        } catch (IOException | MikuException exception) {
+            ui.showLoadingError();
+            return new TaskList();
         }
     }
 

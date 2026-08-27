@@ -26,9 +26,10 @@ displays dates as `MMM dd yyyy` and date-times as `MMM dd yyyy h:mm a`, such as
 
 Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON.
 Each task object uses its code field names: `type`, `description`, `isDone`, plus
-`datetime` for deadlines or `from` and `to` for events. Date values are saved
-in ISO-8601 `LocalDateTime` form. Loading saved tasks at
-startup is not implemented yet.
+`datetime` and `includesTime` for deadlines or `from`, `to`, `fromIncludesTime`,
+and `toIncludesTime` for events. Date values are saved in ISO-8601
+`LocalDateTime` form. Miku loads saved tasks at startup; an unreadable or invalid
+save file results in a friendly message and an empty task list.
 
 * Empty commands, unknown commands, missing parameters, invalid task numbers, and empty task fields display a Miku-style error message. The application then continues reading input.
 

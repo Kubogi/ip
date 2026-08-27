@@ -22,6 +22,12 @@ public class Ui {
         showSeparator();
     }
 
+    /** Explains that saved tasks could not be restored and Miku is starting fresh. */
+    public void showLoadingError() {
+        System.out.println(" OOPS!!! Miku could not load saved tasks, so we're starting with an empty list \u266a");
+        showSeparator();
+    }
+
     /** Displays the current task list. */
     public void showTaskList(TaskList tasks) {
         System.out.println("Here are the tasks in your list \u266b");
