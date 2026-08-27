@@ -4,6 +4,8 @@ import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.Scanner;
 
 import miku.task.Task;
 import miku.task.TaskList;
@@ -11,6 +13,12 @@ import miku.task.TaskList;
 /** Handles all command-line input/output presentation for Miku. */
 public class Ui {
     private static final String SEPARATOR = "____________________________________________________________";
+    private final Scanner scanner;
+
+    /** Creates a UI that reads commands from standard input. */
+    public Ui() {
+        scanner = new Scanner(System.in);
+    }
 
     /** Configures standard output and error streams to display Miku's symbols correctly. */
     public static void configureUtf8Output() {
@@ -25,6 +33,14 @@ public class Ui {
         System.out.println("Hello! I'm Hatsune Miku \u266a");
         System.out.println("What can I do for you?");
         showSeparator();
+    }
+
+    /** Reads and normalizes the next command, or signals that input has ended. */
+    public Optional<String> readCommand() {
+        if (!scanner.hasNextLine()) {
+            return Optional.empty();
+        }
+        return Optional.of(scanner.nextLine().trim());
     }
 
     /** Explains that saved tasks could not be restored and Miku is starting fresh. */
@@ -75,7 +91,6 @@ public class Ui {
     /** Displays a friendly error message for an invalid command. */
     public void showError(String message) {
         System.out.println(" OOPS!!! " + message);
-        showSeparator();
     }
 
     /** Displays the standard separator after each command response. */

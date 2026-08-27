@@ -47,7 +47,7 @@ Miku's user-facing messages should be warm, energetic, and use cheerful symbols 
 
 ## Important files
 
-* src/main/java/miku/Miku.java - application entry point and coordination.
+* src/main/java/miku/Miku.java - application entry point and `run()` coordination loop.
 * src/main/java/miku/command/ - executable command actions.
 * src/main/java/miku/parser/ - command recognition and date/time parsing.
 * src/main/java/miku/storage/ - JSON task persistence.
