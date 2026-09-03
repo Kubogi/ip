@@ -11,6 +11,15 @@ with Java 25 to create the self-contained runnable JAR at `build/libs/miku.jar`.
 Launch it with `java -jar build/libs/miku.jar`. The Shadow plugin includes Miku's
 runtime dependencies in this file, so no separate classpath is needed. ★
 
+## Code style checks
+
+Run `./gradlew checkstyleMain checkstyleTest` on macOS/Linux or
+`gradlew.bat checkstyleMain checkstyleTest` on Windows with Java 25 to check both
+production and test code against the SE-EDU intermediate Java coding standard.
+The rules are in `config/checkstyle/checkstyle.xml`; narrowly scoped exceptions
+belong in `config/checkstyle/suppressions.xml` or use paired
+`//CHECKSTYLE.OFF: RuleName` and `//CHECKSTYLE.ON: RuleName` comments. ☆
+
 ## Commands
 
 * todo <description> creates a task without a date or time.
