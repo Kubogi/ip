@@ -46,10 +46,10 @@ public class Storage {
         String type = getString(fields, "type");
         String description = getString(fields, "description");
         Task task = switch (type) {
-        case "T" -> new Todo(description);
-        case "D" -> createDeadline(fields, description);
-        case "E" -> createEvent(fields, description);
-        default -> throw new MikuException("Saved task data contains an unknown task type.");
+            case "T" -> new Todo(description);
+            case "D" -> createDeadline(fields, description);
+            case "E" -> createEvent(fields, description);
+            default -> throw new MikuException("Saved task data contains an unknown task type.");
         };
         if (getBoolean(fields, "isDone")) {
             task.markAsDone();
@@ -242,13 +242,13 @@ public class Storage {
                 }
                 char escaped = json.charAt(position++);
                 switch (escaped) {
-                case '"', '\\', '/' -> value.append(escaped);
-                case 'b' -> value.append('\b');
-                case 'f' -> value.append('\f');
-                case 'n' -> value.append('\n');
-                case 'r' -> value.append('\r');
-                case 't' -> value.append('\t');
-                default -> throw invalidJson();
+                    case '"', '\\', '/' -> value.append(escaped);
+                    case 'b' -> value.append('\b');
+                    case 'f' -> value.append('\f');
+                    case 'n' -> value.append('\n');
+                    case 'r' -> value.append('\r');
+                    case 't' -> value.append('\t');
+                    default -> throw invalidJson();
                 }
             }
             expect('"');

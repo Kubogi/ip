@@ -23,22 +23,22 @@ public class Parser {
         }
         String[] arguments = command.split("\\s+");
         return switch (arguments[0]) {
-        case "bye" -> {
-            requireNoExtraArguments(arguments, "bye does not need any parameters!!");
-            yield new ExitCommand();
-        }
-        case "list" -> {
-            requireNoExtraArguments(arguments, "list does not need any parameters!!");
-            yield new ListCommand();
-        }
-        case "find" -> new FindCommand(parseFindKeyword(command));
-        case "mark" -> new MarkCommand(parseTaskNumber(arguments, "mark"));
-        case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments, "unmark"));
-        case "delete" -> new DeleteCommand(parseTaskNumber(arguments, "delete"));
-        case "todo" -> new AddCommand(parseTodo(command));
-        case "deadline" -> new AddCommand(parseDeadline(command));
-        case "event" -> new AddCommand(parseEvent(command));
-        default -> throw new MikuException("I'm sorry, but Miku doesn't know what that means :-(");
+            case "bye" -> {
+                requireNoExtraArguments(arguments, "bye does not need any parameters!!");
+                yield new ExitCommand();
+            }
+            case "list" -> {
+                requireNoExtraArguments(arguments, "list does not need any parameters!!");
+                yield new ListCommand();
+            }
+            case "find" -> new FindCommand(parseFindKeyword(command));
+            case "mark" -> new MarkCommand(parseTaskNumber(arguments, "mark"));
+            case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments, "unmark"));
+            case "delete" -> new DeleteCommand(parseTaskNumber(arguments, "delete"));
+            case "todo" -> new AddCommand(parseTodo(command));
+            case "deadline" -> new AddCommand(parseDeadline(command));
+            case "event" -> new AddCommand(parseEvent(command));
+            default -> throw new MikuException("I'm sorry, but Miku doesn't know what that means :-(");
         };
     }
 
