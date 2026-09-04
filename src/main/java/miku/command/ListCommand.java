@@ -2,13 +2,13 @@ package miku.command;
 
 import miku.storage.Storage;
 import miku.task.TaskList;
-import miku.ui.Ui;
+import miku.ui.ResponseFormatter;
 
 /** Displays the current task list. */
 public class ListCommand extends Command {
     /** Displays the current task list without changing it. */
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) {
-        ui.showTaskList(tasks);
+    public String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage) {
+        return responseFormatter.formatTaskList(tasks);
     }
 }

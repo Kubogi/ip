@@ -2,7 +2,7 @@ package miku.command;
 
 import miku.storage.Storage;
 import miku.task.TaskList;
-import miku.ui.Ui;
+import miku.ui.ResponseFormatter;
 
 /** Displays tasks whose descriptions contain a supplied keyword. */
 public class FindCommand extends Command {
@@ -15,7 +15,7 @@ public class FindCommand extends Command {
 
     /** Displays the matching tasks without changing or saving the task list. */
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) {
-        ui.showMatchingTasks(tasks.findByDescription(keyword));
+    public String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage) {
+        return responseFormatter.formatMatchingTasks(tasks.findByDescription(keyword));
     }
 }

@@ -1,49 +1,58 @@
 package miku;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import miku.command.Command;
 import miku.parser.Parser;
 import miku.storage.Storage;
 import miku.task.TaskList;
-import miku.ui.Ui;
+import miku.ui.ResponseFormatter;
 
-/** Coordinates Miku's command-line task tracker. */
+/** Coordinates Miku's task tracker and provides responses for its GUI. */
 public class Miku {
-    private final Ui ui;
+    private final ResponseFormatter responseFormatter;
     private final Parser parser;
     private final Storage storage;
     private TaskList tasks;
+    private boolean hasLoadingError;
+    private boolean isExitRequested;
 
     /** Creates Miku's application collaborators. */
     public Miku() {
-        ui = new Ui();
-        parser = new Parser();
-        storage = new Storage();
+        this(new Storage());
     }
 
-    /** Starts Miku and continues handling commands until goodbye or end-of-input. */
-    public void run() {
-        ui.showWelcome();
+    /** Creates Miku with a supplied storage location. */
+    Miku(Storage storage) {
+        responseFormatter = new ResponseFormatter();
+        parser = new Parser();
+        this.storage = storage;
         tasks = loadTasks();
-        boolean isExit = false;
-        while (!isExit) {
-            Optional<String> input = ui.readCommand();
-            if (input.isEmpty()) {
-                break;
-            }
-            try {
-                ui.showSeparator();
-                Command command = parser.parse(input.get());
-                command.execute(tasks, ui, storage);
-                isExit = command.isExit();
-            } catch (MikuException exception) {
-                ui.showError(exception.getMessage());
-            } finally {
-                ui.showSeparator();
-            }
+    }
+
+    /** Returns Miku's greeting, including a storage warning when loading failed. */
+    public String getWelcomeMessage() {
+        if (hasLoadingError) {
+            return responseFormatter.formatWelcome() + '\n' + responseFormatter.formatLoadingError();
         }
+        return responseFormatter.formatWelcome();
+    }
+
+    /** Processes one user command and returns the response that should appear in the chat. */
+    public String getResponse(String input) {
+        try {
+            Command command = parser.parse(input == null ? "" : input.trim());
+            String response = command.execute(tasks, responseFormatter, storage);
+            isExitRequested = command.isExit();
+            return response;
+        } catch (MikuException exception) {
+            return responseFormatter.formatError(exception.getMessage());
+        }
+    }
+
+    /** Returns whether the most recently successful command requested application exit. */
+    public boolean isExitRequested() {
+        return isExitRequested;
     }
 
     /** Loads persisted tasks and starts with an empty list if the save data is unavailable or invalid. */
@@ -51,14 +60,8 @@ public class Miku {
         try {
             return new TaskList(storage.loadTasks());
         } catch (IOException | MikuException exception) {
-            ui.showLoadingError();
+            hasLoadingError = true;
             return new TaskList();
         }
-    }
-
-    /** Configures output encoding and starts a Miku session. */
-    public static void main(String[] args) {
-        Ui.configureUtf8Output();
-        new Miku().run();
     }
 }

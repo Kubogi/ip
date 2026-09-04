@@ -4,7 +4,7 @@ import miku.MikuException;
 import miku.storage.Storage;
 import miku.task.Task;
 import miku.task.TaskList;
-import miku.ui.Ui;
+import miku.ui.ResponseFormatter;
 
 /** Removes one task from Miku's task list. */
 public class DeleteCommand extends TaskNumberCommand {
@@ -15,9 +15,9 @@ public class DeleteCommand extends TaskNumberCommand {
 
     /** Removes the selected task, persists the updated list, and reports the result. */
     @Override
-    public void execute(TaskList tasks, Ui ui, Storage storage) throws MikuException {
+    public String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage) throws MikuException {
         Task removedTask = tasks.remove(getTaskIndex(tasks));
         saveTasks(storage, tasks);
-        ui.showTaskDeleted(removedTask, tasks.size());
+        return responseFormatter.formatTaskDeleted(removedTask, tasks.size());
     }
 }
