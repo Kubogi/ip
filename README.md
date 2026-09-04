@@ -24,8 +24,8 @@ On macOS or Linux, use `./gradlew run` and `./gradlew shadowJar` instead. ☆
 
 Miku runs without images. To display avatars, add these PNG files yourself:
 
-- `src/main/resources/images/DaUser.png`
-- `src/main/resources/images/DaMiku.png`
+- `src/main/resources/images/DaUser.jpg`
+- `src/main/resources/images/DaMiku.jpg`
 
 The next launch loads either image automatically. ♪
 

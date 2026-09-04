@@ -27,8 +27,8 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private final Image userImage = loadImage("/images/DaUser.png");
-    private final Image mikuImage = loadImage("/images/DaMiku.png");
+    private final Image userImage = loadImage("/images/DaUser.jpg");
+    private final Image mikuImage = loadImage("/images/DaMiku.jpg");
     private Miku miku;
     private Runnable exitHandler = () -> { };
 

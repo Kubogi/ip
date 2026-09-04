@@ -17,8 +17,8 @@ dialog. Empty commands display only Miku's existing validation error. `bye`
 shows Miku's farewell, disables input, and closes the window after one second.
 
 The interface remains usable without avatar files. Place optional PNG avatars at
-`src/main/resources/images/DaUser.png` and
-`src/main/resources/images/DaMiku.png`; they are loaded on the next launch.
+`src/main/resources/images/DaUser.jpg` and
+`src/main/resources/images/DaMiku.jpg`; they are loaded on the next launch.
 
 ## Commands
 
