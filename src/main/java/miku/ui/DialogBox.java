@@ -1,6 +1,9 @@
 package miku.ui;
 
-import javafx.geometry.Insets;
+import java.io.IOException;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -9,28 +12,27 @@ import javafx.scene.layout.HBox;
 
 /** Displays one chat message alongside an optional speaker avatar. */
 public class DialogBox extends HBox {
-    private static final double AVATAR_SIZE = 64;
-    private final Label dialog;
-    private final ImageView displayPicture;
+    @FXML
+    private Label dialog;
+    @FXML
+    private ImageView displayPicture;
 
-    /** Creates a right-aligned message box with the supplied text and optional avatar. */
-    public DialogBox(String text, Image image) {
-        dialog = new Label(text);
-        displayPicture = new ImageView(image);
-
-        dialog.setWrapText(true);
-        dialog.setMaxWidth(290);
-        displayPicture.setFitHeight(AVATAR_SIZE);
-        displayPicture.setFitWidth(AVATAR_SIZE);
-        displayPicture.setPreserveRatio(true);
+    /** Loads the dialog FXML and fills it with the supplied message and optional avatar. */
+    private DialogBox(String text, Image image) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(DialogBox.class.getResource("/view/DialogBox.fxml"));
+            fxmlLoader.setController(this);
+            fxmlLoader.setRoot(this);
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new IllegalStateException("A chat dialog could not be loaded.", exception);
+        }
+        dialog.setText(text);
+        displayPicture.setImage(image);
         if (image == null) {
             displayPicture.setManaged(false);
             displayPicture.setVisible(false);
         }
-
-        setAlignment(Pos.TOP_RIGHT);
-        setPadding(new Insets(10, 5, 10, 5));
-        getChildren().addAll(dialog, displayPicture);
     }
 
     /** Returns a right-aligned dialog for a user message. */
