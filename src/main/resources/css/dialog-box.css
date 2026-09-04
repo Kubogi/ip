@@ -1,15 +1,15 @@
 .label {
-    -fx-background-color: linear-gradient(to bottom right, #dcfff9, #a6ecff);
+    -fx-background-color: linear-gradient(to bottom right, #fff1f7, #ffd5e4);
     -fx-background-radius: 1em 1em 0 1em;
-    -fx-border-color: #39c5bb;
+    -fx-border-color: #ff9cb4;
     -fx-border-radius: 1em 1em 0 1em;
     -fx-border-width: 1px;
 }
 
 .reply-label {
-    -fx-background-color: linear-gradient(to bottom right, #fff1f7, #ffd5e4);
+    -fx-background-color: linear-gradient(to bottom right, #dcfff9, #a6ecff);
     -fx-background-radius: 1em 1em 1em 0;
-    -fx-border-color: #ff9cb4;
+    -fx-border-color: #39c5bb;
     -fx-border-radius: 1em 1em 1em 0;
 }
 
