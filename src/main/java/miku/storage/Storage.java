@@ -19,14 +19,25 @@ import miku.task.Todo;
 
 /** Loads and saves Miku's task list as JSON in a local data file. */
 public class Storage {
-    private static final Path SAVE_FILE = Path.of("data", "miku.json");
+    private static final Path DEFAULT_SAVE_FILE = Path.of("data", "miku.json");
+    private final Path saveFile;
+
+    /** Creates storage that uses Miku's default local data file. */
+    public Storage() {
+        this(DEFAULT_SAVE_FILE);
+    }
+
+    /** Creates storage that reads and writes the supplied save file. */
+    public Storage(Path saveFile) {
+        this.saveFile = saveFile;
+    }
 
     /** Loads saved tasks, returning an empty list when no save file exists yet. */
     public List<Task> loadTasks() throws IOException, MikuException {
-        if (Files.notExists(SAVE_FILE)) {
+        if (Files.notExists(saveFile)) {
             return List.of();
         }
-        List<Map<String, Object>> savedTasks = new JsonReader(Files.readString(SAVE_FILE, StandardCharsets.UTF_8))
+        List<Map<String, Object>> savedTasks = new JsonReader(Files.readString(saveFile, StandardCharsets.UTF_8))
                 .readTaskArray();
         List<Task> tasks = new ArrayList<>();
         for (Map<String, Object> savedTask : savedTasks) {
@@ -37,8 +48,8 @@ public class Storage {
 
     /** Replaces the saved task list with the current list. */
     public void saveTasks(List<Task> tasks) throws IOException {
-        Files.createDirectories(SAVE_FILE.getParent());
-        Files.writeString(SAVE_FILE, toJson(tasks), StandardCharsets.UTF_8);
+        Files.createDirectories(saveFile.getParent());
+        Files.writeString(saveFile, toJson(tasks), StandardCharsets.UTF_8);
     }
 
     /** Recreates a task from fields stored in one JSON object. */

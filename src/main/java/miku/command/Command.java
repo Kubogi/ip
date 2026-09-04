@@ -5,12 +5,13 @@ import java.io.IOException;
 import miku.MikuException;
 import miku.storage.Storage;
 import miku.task.TaskList;
-import miku.ui.Ui;
+import miku.ui.ResponseFormatter;
 
-/** Represents an executable user request in Miku's command-line task tracker. */
+/** Represents an executable user request in Miku's task tracker. */
 public abstract class Command {
-    /** Carries out this command using Miku's application collaborators. */
-    public abstract void execute(TaskList tasks, Ui ui, Storage storage) throws MikuException;
+    /** Carries out this command and returns the response to display to the user. */
+    public abstract String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage)
+            throws MikuException;
 
     /** Returns whether executing this command should end the application. */
     public boolean isExit() {
