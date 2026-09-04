@@ -48,7 +48,10 @@ public class Storage {
 
     /** Replaces the saved task list with the current list. */
     public void saveTasks(List<Task> tasks) throws IOException {
-        Files.createDirectories(saveFile.getParent());
+        Path parentDirectory = saveFile.getParent();
+        if (parentDirectory != null) {
+            Files.createDirectories(parentDirectory);
+        }
         Files.writeString(saveFile, toJson(tasks), StandardCharsets.UTF_8);
     }
 
