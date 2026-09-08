@@ -54,6 +54,18 @@ class MikuTest {
     }
 
     @Test
+    void getResponse_markAndUnmarkCommands_updatesTaskStatus() {
+        Miku miku = new Miku(new Storage(temporaryDirectory.resolve("miku.json")));
+        miku.getResponse("todo read book");
+
+        String markResponse = miku.getResponse("mark 1");
+        String unmarkResponse = miku.getResponse("unmark 1");
+
+        assertEquals("Okay ★ I've marked this task as done!\n[T][★] read book", markResponse);
+        assertEquals("Oops... I've marked this task as not done yet ♪\n[T][ ] read book", unmarkResponse);
+    }
+
+    @Test
     void getWelcomeMessage_invalidSavedTasks_includesLoadingWarning() throws IOException {
         Path saveFile = temporaryDirectory.resolve("miku.json");
         Files.writeString(saveFile, "not json");

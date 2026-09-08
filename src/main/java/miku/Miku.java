@@ -3,6 +3,7 @@ package miku;
 import java.io.IOException;
 
 import miku.command.Command;
+import miku.command.CommandContext;
 import miku.parser.Parser;
 import miku.storage.Storage;
 import miku.task.TaskList;
@@ -43,7 +44,8 @@ public class Miku {
         try {
             Command command = parser.parse(input == null ? "" : input.trim());
             assert command != null : "Parser must return a command for valid input.";
-            String response = command.execute(tasks, responseFormatter, storage);
+            CommandContext commandContext = new CommandContext(tasks, responseFormatter, storage);
+            String response = command.execute(commandContext);
             assert response != null : "Commands must return a response for the chat interface.";
             isExitRequested = command.isExit();
             return response;

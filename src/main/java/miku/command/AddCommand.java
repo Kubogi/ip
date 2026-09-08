@@ -1,10 +1,7 @@
 package miku.command;
 
 import miku.MikuException;
-import miku.storage.Storage;
 import miku.task.Task;
-import miku.task.TaskList;
-import miku.ui.ResponseFormatter;
 
 /** Adds a parser-created task to Miku's task list. */
 public class AddCommand extends Command {
@@ -17,9 +14,9 @@ public class AddCommand extends Command {
 
     /** Adds the task, persists the updated list, and reports the result. */
     @Override
-    public String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage) throws MikuException {
-        tasks.add(task);
-        saveTasks(storage, tasks);
-        return responseFormatter.formatTaskAdded(task, tasks.size());
+    public String execute(CommandContext commandContext) throws MikuException {
+        commandContext.tasks().add(task);
+        saveTasks(commandContext);
+        return commandContext.responseFormatter().formatTaskAdded(task, commandContext.tasks().size());
     }
 }
