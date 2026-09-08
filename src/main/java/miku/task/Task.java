@@ -30,11 +30,6 @@ public abstract class Task {
         isDone = false;
     }
 
-    /** Keeps compatibility with the original command implementation. */
-    public void unmarkDone() {
-        markAsNotDone();
-    }
-
     /** Returns this task's description. */
     public String getDescription() {
         return description;
