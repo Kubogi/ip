@@ -12,6 +12,7 @@ public class Deadline extends Task {
     /** Creates an undone deadline with its completion date or time. */
     public Deadline(String description, LocalDateTime dateTime, boolean hasTime) {
         super("D", description);
+        assert dateTime != null : "Deadlines must have a date and time.";
         this.dateTime = dateTime;
         this.hasTime = hasTime;
     }
