@@ -134,6 +134,7 @@ public class Parser {
         }
         DateTimeParser.ParsedDateTime parsedStart = DateTimeParser.parse(start);
         DateTimeParser.ParsedDateTime parsedEnd = DateTimeParser.parse(end);
+        DateTimeParser.validateEventRange(parsedStart.dateTime(), parsedEnd.dateTime());
         return new Event(description, parsedStart.dateTime(), parsedStart.hasTime(),
                 parsedEnd.dateTime(), parsedEnd.hasTime());
     }

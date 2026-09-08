@@ -51,6 +51,14 @@ public final class DateTimeParser {
         return (hasTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT).format(dateTime);
     }
 
+    /** Ensures that an event end does not occur before its start. */
+    public static void validateEventRange(LocalDateTime startDateTime, LocalDateTime endDateTime)
+            throws MikuException {
+        if (endDateTime.isBefore(startDateTime)) {
+            throw new MikuException("The end of an event cannot be earlier than its start!! \u2728");
+        }
+    }
+
     /** Returns the error used consistently when a supplied date cannot be parsed. */
     private static MikuException invalidDateTime() {
         return new MikuException("Please use yyyy-MM-dd or d/M/yyyy, optionally followed by HHmm (24-hour time) ♪");

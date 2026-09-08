@@ -41,6 +41,9 @@ Dates use `yyyy-MM-dd` (for example, `2019-10-15`) or `d/M/yyyy` (for example,
 `d/M/yyyy HHmm`. Date-only values display as `MMM dd yyyy`; date-times display
 as `MMM dd yyyy h:mm a`.
 
+An event's end cannot be earlier than its start; events with equal start and end
+date-times are allowed. ☆
+
 ## Persistence and messages
 
 Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON and

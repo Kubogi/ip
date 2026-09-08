@@ -34,4 +34,19 @@ class ParserTest {
         assertInstanceOf(AddCommand.class, parser.parse("deadline submit work /by 2026-09-08"));
         assertInstanceOf(AddCommand.class, parser.parse("event concert /from 2026-09-08 /to 2026-09-09"));
     }
+
+    @Test
+    void parse_eventWithEqualEndpoints_returnsAddCommand() throws MikuException {
+        Parser parser = new Parser();
+
+        assertInstanceOf(AddCommand.class, parser.parse("event briefing /from 2026-09-08 0900 /to 2026-09-08 0900"));
+    }
+
+    @Test
+    void parse_eventEndingBeforeStart_exceptionThrown() {
+        Parser parser = new Parser();
+
+        assertThrows(MikuException.class, () -> parser.parse(
+                "event briefing /from 2026-09-08 0900 /to 2026-09-08 0859"));
+    }
 }
