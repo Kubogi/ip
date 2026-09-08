@@ -35,6 +35,8 @@ public class MainWindow extends AnchorPane {
     /** Configures automatic scrolling after FXML has injected the chat controls. */
     @FXML
     public void initialize() {
+        assert scrollPane != null && dialogContainer != null && userInput != null && sendButton != null
+                : "Main window FXML must inject all chat controls.";
         dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
     }
 
@@ -52,6 +54,7 @@ public class MainWindow extends AnchorPane {
     /** Adds user input and Miku's response to the conversation before clearing the input field. */
     @FXML
     private void handleUserInput() {
+        assert miku != null : "Main window must receive Miku before handling input.";
         String input = userInput.getText();
         if (!input.isBlank()) {
             dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));

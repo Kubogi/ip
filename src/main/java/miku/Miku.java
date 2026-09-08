@@ -42,7 +42,9 @@ public class Miku {
     public String getResponse(String input) {
         try {
             Command command = parser.parse(input == null ? "" : input.trim());
+            assert command != null : "Parser must return a command for valid input.";
             String response = command.execute(tasks, responseFormatter, storage);
+            assert response != null : "Commands must return a response for the chat interface.";
             isExitRequested = command.isExit();
             return response;
         } catch (MikuException exception) {

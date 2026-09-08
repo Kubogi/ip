@@ -146,6 +146,8 @@ public class Storage {
 
     /** Converts one task to JSON, including only fields that belong to its type. */
     private String toJson(Task task) {
+        assert task instanceof Todo || task instanceof Deadline || task instanceof Event
+                : "Only supported task types can be saved.";
         StringBuilder json = new StringBuilder("{");
         appendStringField(json, "type", task.getType());
         json.append(',');

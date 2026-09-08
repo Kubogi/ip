@@ -1,6 +1,7 @@
 package miku.ui;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,13 +21,16 @@ public class DialogBox extends HBox {
     /** Loads the dialog FXML and fills it with the supplied message and optional avatar. */
     private DialogBox(String text, Image image) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(DialogBox.class.getResource("/view/DialogBox.fxml"));
+            URL dialogBoxResource = DialogBox.class.getResource("/view/DialogBox.fxml");
+            assert dialogBoxResource != null : "Dialog box FXML must be packaged.";
+            FXMLLoader fxmlLoader = new FXMLLoader(dialogBoxResource);
             fxmlLoader.setController(this);
             fxmlLoader.setRoot(this);
             fxmlLoader.load();
         } catch (IOException exception) {
             throw new IllegalStateException("A chat dialog could not be loaded.", exception);
         }
+        assert dialog != null && displayPicture != null : "Dialog box FXML must inject its controls.";
         dialog.setText(text);
         displayPicture.setImage(image);
         if (image == null) {

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import miku.MikuException;
+import miku.command.AddCommand;
 import miku.command.FindCommand;
 
 /** Tests parser validation for commands with high-value input rules. */
@@ -23,5 +24,14 @@ class ParserTest {
         Parser parser = new Parser();
 
         assertThrows(MikuException.class, () -> parser.parse("find"));
+    }
+
+    @Test
+    void parse_taskCommands_returnsAddCommands() throws MikuException {
+        Parser parser = new Parser();
+
+        assertInstanceOf(AddCommand.class, parser.parse("todo review notes"));
+        assertInstanceOf(AddCommand.class, parser.parse("deadline submit work /by 2026-09-08"));
+        assertInstanceOf(AddCommand.class, parser.parse("event concert /from 2026-09-08 /to 2026-09-09"));
     }
 }

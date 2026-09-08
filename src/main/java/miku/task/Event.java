@@ -15,6 +15,8 @@ public class Event extends Task {
     public Event(String description, LocalDateTime from, boolean hasStartTime,
             LocalDateTime to, boolean hasEndTime) {
         super("E", description);
+        assert from != null : "Events must have a start date and time.";
+        assert to != null : "Events must have an end date and time.";
         this.from = from;
         this.to = to;
         this.hasStartTime = hasStartTime;

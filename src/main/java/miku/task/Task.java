@@ -8,6 +8,9 @@ public abstract class Task {
 
     /** Creates an undone task with the given type and description. */
     protected Task(String type, String description) {
+        assert "T".equals(type) || "D".equals(type) || "E".equals(type)
+                : "Tasks must use a supported type marker.";
+        assert description != null : "Tasks must have a description.";
         this.type = type;
         this.description = description;
         isDone = false;

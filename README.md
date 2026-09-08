@@ -20,6 +20,11 @@ java -jar build/libs/miku.jar
 
 On macOS or Linux, use `./gradlew run` and `./gradlew shadowJar` instead. ☆
 
+Gradle development tasks run with Java assertions enabled. When diagnosing a
+development build launched directly from the JAR, use
+`java -ea -jar build/libs/miku.jar`. The standard `java -jar` command remains
+suitable for end users. ♪
+
 ## Avatar images
 
 Miku runs without images. To display avatars, add these PNG files yourself:
