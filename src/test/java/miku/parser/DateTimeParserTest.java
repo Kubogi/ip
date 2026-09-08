@@ -18,7 +18,7 @@ class DateTimeParserTest {
     void parse_isoDate_returnsMidnightAndIndicatesNoTime() throws MikuException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2024-02-29");
 
-        assertEquals(LocalDateTime.of(2024, 2, 29, 0, 0), parsed.value());
+        assertEquals(LocalDateTime.of(2024, 2, 29, 0, 0), parsed.dateTime());
         assertFalse(parsed.hasTime());
     }
 
@@ -26,7 +26,7 @@ class DateTimeParserTest {
     void parse_isoDateTime_returnsValueAndIndicatesTime() throws MikuException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("2024-02-29 2359");
 
-        assertEquals(LocalDateTime.of(2024, 2, 29, 23, 59), parsed.value());
+        assertEquals(LocalDateTime.of(2024, 2, 29, 23, 59), parsed.dateTime());
         assertTrue(parsed.hasTime());
     }
 
@@ -34,7 +34,7 @@ class DateTimeParserTest {
     void parse_slashDate_returnsMidnightAndIndicatesNoTime() throws MikuException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("3/7/2024");
 
-        assertEquals(LocalDateTime.of(2024, 7, 3, 0, 0), parsed.value());
+        assertEquals(LocalDateTime.of(2024, 7, 3, 0, 0), parsed.dateTime());
         assertFalse(parsed.hasTime());
     }
 
@@ -42,7 +42,7 @@ class DateTimeParserTest {
     void parse_slashDateTime_returnsValueAndIndicatesTime() throws MikuException {
         DateTimeParser.ParsedDateTime parsed = DateTimeParser.parse("3/7/2024 0015");
 
-        assertEquals(LocalDateTime.of(2024, 7, 3, 0, 15), parsed.value());
+        assertEquals(LocalDateTime.of(2024, 7, 3, 0, 15), parsed.dateTime());
         assertTrue(parsed.hasTime());
     }
 

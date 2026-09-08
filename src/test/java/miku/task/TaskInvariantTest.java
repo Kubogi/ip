@@ -1,6 +1,8 @@
 package miku.task;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 
@@ -25,5 +27,20 @@ class TaskInvariantTest {
 
         assertThrows(AssertionError.class, () -> new Event("concert", null, false, dateTime, true));
         assertThrows(AssertionError.class, () -> new Event("concert", dateTime, true, null, false));
+    }
+
+    @Test
+    void scheduledTasks_scheduleAccessors_returnProvidedValues() {
+        LocalDateTime startDateTime = LocalDateTime.of(2026, 9, 8, 10, 0);
+        LocalDateTime dueDateTime = LocalDateTime.of(2026, 9, 9, 17, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2026, 9, 10, 12, 0);
+        Deadline deadline = new Deadline("submit work", dueDateTime, true);
+        Event event = new Event("concert", startDateTime, true, endDateTime, false);
+
+        assertEquals(dueDateTime, deadline.getDueDateTime());
+        assertTrue(deadline.hasDueTime());
+        assertEquals(startDateTime, event.getStartDateTime());
+        assertEquals(endDateTime, event.getEndDateTime());
+        assertTrue(event.hasStartTime());
     }
 }

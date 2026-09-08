@@ -83,21 +83,21 @@ public class Storage {
 
     /** Recreates a deadline and retains whether it displayed a time. */
     private Task createDeadline(Map<String, Object> fields, String description) throws MikuException {
-        LocalDateTime dateTime = parseDateTime(getString(fields, "datetime"));
-        boolean hasTime = getOptionalBoolean(fields, "includesTime",
-                !dateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Deadline(description, dateTime, hasTime);
+        LocalDateTime dueDateTime = parseDateTime(getString(fields, "datetime"));
+        boolean hasDueTime = getOptionalBoolean(fields, "includesTime",
+                !dueDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Deadline(description, dueDateTime, hasDueTime);
     }
 
     /** Recreates an event and retains whether its endpoints displayed times. */
     private Task createEvent(Map<String, Object> fields, String description) throws MikuException {
-        LocalDateTime from = parseDateTime(getString(fields, "from"));
-        LocalDateTime to = parseDateTime(getString(fields, "to"));
+        LocalDateTime startDateTime = parseDateTime(getString(fields, "from"));
+        LocalDateTime endDateTime = parseDateTime(getString(fields, "to"));
         boolean hasStartTime = getOptionalBoolean(fields, "fromIncludesTime",
-                !from.toLocalTime().equals(LocalTime.MIDNIGHT));
+                !startDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
         boolean hasEndTime = getOptionalBoolean(fields, "toIncludesTime",
-                !to.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Event(description, from, hasStartTime, to, hasEndTime);
+                !endDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Event(description, startDateTime, hasStartTime, endDateTime, hasEndTime);
     }
 
     /** Parses an ISO-8601 date-time stored in the save file. */
@@ -165,13 +165,13 @@ public class Storage {
         json.append(", \"isDone\": ").append(task.isDone());
         if (task instanceof Deadline deadline) {
             json.append(',');
-            appendStringField(json, "datetime", deadline.getDateTime().toString());
-            json.append(", \"includesTime\": ").append(deadline.hasTime());
+            appendStringField(json, "datetime", deadline.getDueDateTime().toString());
+            json.append(", \"includesTime\": ").append(deadline.hasDueTime());
         } else if (task instanceof Event event) {
             json.append(',');
-            appendStringField(json, "from", event.getFrom().toString());
+            appendStringField(json, "from", event.getStartDateTime().toString());
             json.append(',');
-            appendStringField(json, "to", event.getTo().toString());
+            appendStringField(json, "to", event.getEndDateTime().toString());
             json.append(", \"fromIncludesTime\": ").append(event.hasStartTime());
             json.append(", \"toIncludesTime\": ").append(event.hasEndTime());
         }

@@ -6,30 +6,30 @@ import miku.parser.DateTimeParser;
 
 /** A task that must be completed before a specified date or time. */
 public class Deadline extends Task {
-    private LocalDateTime dateTime;
-    private boolean hasTime;
+    private final LocalDateTime dueDateTime;
+    private final boolean hasDueTime;
 
     /** Creates an undone deadline with its completion date or time. */
-    public Deadline(String description, LocalDateTime dateTime, boolean hasTime) {
+    public Deadline(String description, LocalDateTime dueDateTime, boolean hasDueTime) {
         super(TaskType.DEADLINE, description);
-        assert dateTime != null : "Deadlines must have a date and time.";
-        this.dateTime = dateTime;
-        this.hasTime = hasTime;
+        assert dueDateTime != null : "Deadlines must have a date and time.";
+        this.dueDateTime = dueDateTime;
+        this.hasDueTime = hasDueTime;
     }
 
     /** Returns the deadline's typed date and time. */
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getDueDateTime() {
+        return dueDateTime;
     }
 
     /** Returns whether the deadline was entered with an explicit time. */
-    public boolean hasTime() {
-        return hasTime;
+    public boolean hasDueTime() {
+        return hasDueTime;
     }
 
     /** Returns this deadline in Miku's task-list display format. */
     @Override
     public String toString() {
-        return super.toString() + " (by: " + DateTimeParser.format(dateTime, hasTime) + ")";
+        return super.toString() + " (by: " + DateTimeParser.format(dueDateTime, hasDueTime) + ")";
     }
 }
