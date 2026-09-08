@@ -1,6 +1,7 @@
 package miku.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.List;
 
@@ -28,5 +29,17 @@ class TaskListTest {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
 
         assertEquals(List.of(), tasks.findByDescription("meeting"));
+    }
+
+    @Test
+    void replace_existingIndex_returnsOriginalAndUpdatesTask() {
+        Todo originalTask = new Todo("read book");
+        Todo replacementTask = new Todo("write notes");
+        TaskList tasks = new TaskList(List.of(originalTask));
+
+        Task replacedTask = tasks.replace(0, replacementTask);
+
+        assertSame(originalTask, replacedTask);
+        assertSame(replacementTask, tasks.get(0));
     }
 }

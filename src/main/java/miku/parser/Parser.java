@@ -8,6 +8,7 @@ import miku.command.ExitCommand;
 import miku.command.FindCommand;
 import miku.command.ListCommand;
 import miku.command.MarkCommand;
+import miku.command.RescheduleCommand;
 import miku.command.UnmarkCommand;
 import miku.task.Deadline;
 import miku.task.Event;
@@ -35,6 +36,7 @@ public class Parser {
             case "mark" -> new MarkCommand(parseTaskNumber(arguments, "mark"));
             case "unmark" -> new UnmarkCommand(parseTaskNumber(arguments, "unmark"));
             case "delete" -> new DeleteCommand(parseTaskNumber(arguments, "delete"));
+            case "reschedule" -> parseReschedule(command);
             case "todo" -> new AddCommand(parseTodo(command));
             case "deadline" -> new AddCommand(parseDeadline(command));
             case "event" -> new AddCommand(parseEvent(command));
@@ -84,6 +86,79 @@ public class Parser {
             throw new MikuException("The description of a todo cannot be empty!! \u266a");
         }
         return new Todo(description);
+    }
+
+    /** Parses a reschedule request for a deadline or event. */
+    private Command parseReschedule(String command) throws MikuException {
+        assert command.equals("reschedule") || command.startsWith("reschedule ")
+                : "Reschedule parsing must receive a reschedule command.";
+        String arguments = command.substring("reschedule".length()).trim();
+        if (arguments.isEmpty()) {
+            throw new MikuException("Please provide a task number for reschedule \u266a");
+        }
+        String[] taskAndSchedule = arguments.split("\\s+", 2);
+        int taskNumber = parseRescheduleTaskNumber(taskAndSchedule[0]);
+        if (taskAndSchedule.length < 2) {
+            throw invalidRescheduleSyntax();
+        }
+        String schedule = taskAndSchedule[1].trim();
+        if (schedule.startsWith("/by")) {
+            return parseDeadlineReschedule(taskNumber, schedule);
+        }
+        if (schedule.startsWith("/from")) {
+            return parseEventReschedule(taskNumber, schedule);
+        }
+        throw invalidRescheduleSyntax();
+    }
+
+    /** Parses the index supplied to a reschedule request. */
+    private int parseRescheduleTaskNumber(String taskNumberText) throws MikuException {
+        try {
+            return Integer.parseInt(taskNumberText);
+        } catch (NumberFormatException exception) {
+            throw new MikuException("The task number must be a whole number!! \u266b");
+        }
+    }
+
+    /** Parses the new due date from a deadline reschedule request. */
+    private Command parseDeadlineReschedule(int taskNumber, String schedule) throws MikuException {
+        if (!schedule.startsWith("/by ")) {
+            throw new MikuException("The new due date of a deadline cannot be empty!! \u266b");
+        }
+        String dueDateTime = schedule.substring("/by ".length()).trim();
+        if (dueDateTime.isEmpty()) {
+            throw new MikuException("The new due date of a deadline cannot be empty!! \u266b");
+        }
+        DateTimeParser.ParsedDateTime parsedDueDateTime = DateTimeParser.parse(dueDateTime);
+        return new RescheduleCommand(taskNumber, parsedDueDateTime);
+    }
+
+    /** Parses the new start and end from an event reschedule request. */
+    private Command parseEventReschedule(int taskNumber, String schedule) throws MikuException {
+        if (!schedule.startsWith("/from ")) {
+            throw new MikuException("The new start of an event cannot be empty!! \u266b");
+        }
+        int toIndex = schedule.indexOf(" /to ", "/from ".length());
+        if (toIndex < 0) {
+            throw invalidRescheduleSyntax();
+        }
+        String startDateTime = schedule.substring("/from ".length(), toIndex).trim();
+        String endDateTime = schedule.substring(toIndex + " /to ".length()).trim();
+        if (startDateTime.isEmpty()) {
+            throw new MikuException("The new start of an event cannot be empty!! \u266b");
+        }
+        if (endDateTime.isEmpty()) {
+            throw new MikuException("The new end of an event cannot be empty!! \u2728");
+        }
+        DateTimeParser.ParsedDateTime parsedStartDateTime = DateTimeParser.parse(startDateTime);
+        DateTimeParser.ParsedDateTime parsedEndDateTime = DateTimeParser.parse(endDateTime);
+        DateTimeParser.validateEventRange(parsedStartDateTime.dateTime(), parsedEndDateTime.dateTime());
+        return new RescheduleCommand(taskNumber, parsedStartDateTime, parsedEndDateTime);
+    }
+
+    /** Returns the error used when reschedule markers do not form a supported command. */
+    private MikuException invalidRescheduleSyntax() {
+        return new MikuException("Use /by for a deadline, or /from and /to for an event reschedule!! \u266a");
     }
 
     /** Validates a deadline command and creates its task. */

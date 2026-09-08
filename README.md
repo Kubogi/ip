@@ -39,5 +39,7 @@ The next launch loads either image automatically. ♪
 - `todo <description>`
 - `deadline <description> /by <date or time>`
 - `event <description> /from <start> /to <end>`
+- `reschedule <number> /by <new date or time>` for deadlines
+- `reschedule <number> /from <new start> /to <new end>` for events
 - `list`, `find <keyword>`, `mark <number>`, `unmark <number>`, and `delete <number>`
 - `bye` shows a farewell, then closes the window.

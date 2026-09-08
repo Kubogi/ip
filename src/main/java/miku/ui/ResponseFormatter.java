@@ -47,6 +47,11 @@ public class ResponseFormatter {
         return "Noted ♪ I've removed this task for you!\n" + task + '\n' + formatTaskCount(taskCount);
     }
 
+    /** Returns the confirmation for a task with an updated schedule. */
+    public String formatTaskRescheduled(Task task) {
+        return "Got it! I've rescheduled this task for you \u2728\n" + task;
+    }
+
     /** Returns Miku's farewell message. */
     public String formatGoodbye() {
         return "Bye bye! Miku hopes to see you again soon! ✨";

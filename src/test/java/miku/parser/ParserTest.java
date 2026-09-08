@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import miku.MikuException;
 import miku.command.AddCommand;
 import miku.command.FindCommand;
+import miku.command.RescheduleCommand;
 
 /** Tests parser validation for commands with high-value input rules. */
 class ParserTest {
@@ -48,5 +49,26 @@ class ParserTest {
 
         assertThrows(MikuException.class, () -> parser.parse(
                 "event briefing /from 2026-09-08 0900 /to 2026-09-08 0859"));
+    }
+
+    @Test
+    void parse_rescheduleWithDeadlineOrEventSchedule_returnsRescheduleCommand() throws MikuException {
+        Parser parser = new Parser();
+
+        assertInstanceOf(RescheduleCommand.class, parser.parse("reschedule 1 /by 2026-09-08 0900"));
+        assertInstanceOf(RescheduleCommand.class,
+                parser.parse("reschedule 2 /from 2026-09-08 1800 /to 2026-09-08 1800"));
+    }
+
+    @Test
+    void parse_rescheduleWithInvalidSyntax_exceptionThrown() {
+        Parser parser = new Parser();
+
+        assertThrows(MikuException.class, () -> parser.parse("reschedule"));
+        assertThrows(MikuException.class, () -> parser.parse("reschedule first /by 2026-09-08"));
+        assertThrows(MikuException.class, () -> parser.parse("reschedule 1 /by"));
+        assertThrows(MikuException.class, () -> parser.parse("reschedule 1 /from 2026-09-08"));
+        assertThrows(MikuException.class, () -> parser.parse(
+                "reschedule 1 /from 2026-09-09 /to 2026-09-08"));
     }
 }

@@ -33,6 +33,11 @@ public class TaskList {
         return tasks.remove(index);
     }
 
+    /** Replaces and returns the task at a zero-based index. */
+    public Task replace(int index, Task task) {
+        return tasks.set(index, task);
+    }
+
     /** Returns the current number of tasks. */
     public int size() {
         return tasks.size();

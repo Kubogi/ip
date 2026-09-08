@@ -30,6 +30,8 @@ The interface remains usable without avatar files. Place optional PNG avatars at
 - `todo <description>` creates a task without a date or time.
 - `deadline <description> /by <date or time>` creates a task with a due date or time.
 - `event <description> /from <start> /to <end>` creates a task with a start and end date or time.
+- `reschedule <number> /by <new date or time>` changes a deadline's due date or time.
+- `reschedule <number> /from <new start> /to <new end>` changes an event's start and end dates or times.
 - `list` displays all tasks.
 - `find <keyword>` displays tasks whose descriptions contain the keyword, ignoring letter case.
 - `mark <number>` and `unmark <number>` update completion status.
@@ -43,6 +45,9 @@ as `MMM dd yyyy h:mm a`.
 
 An event's end cannot be earlier than its start; events with equal start and end
 date-times are allowed. ☆
+
+Only deadlines and events can be rescheduled. A reschedule keeps the task's
+description and completion status unchanged. ♪
 
 ## Persistence and messages
 
