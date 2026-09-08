@@ -2,14 +2,13 @@ package miku.task;
 
 /** Represents the common information and behaviour shared by all tasks. */
 public abstract class Task {
-    protected String type;
-    protected String description;
-    protected boolean isDone;
+    private final TaskType type;
+    private final String description;
+    private boolean isDone;
 
     /** Creates an undone task with the given type and description. */
-    protected Task(String type, String description) {
-        assert "T".equals(type) || "D".equals(type) || "E".equals(type)
-                : "Tasks must use a supported type marker.";
+    protected Task(TaskType type, String description) {
+        assert type != null : "Tasks must have a type.";
         assert description != null : "Tasks must have a description.";
         this.type = type;
         this.description = description;
@@ -31,11 +30,6 @@ public abstract class Task {
         isDone = false;
     }
 
-    /** Keeps compatibility with the original command implementation. */
-    public void unmarkDone() {
-        markAsNotDone();
-    }
-
     /** Returns this task's description. */
     public String getDescription() {
         return description;
@@ -43,7 +37,7 @@ public abstract class Task {
 
     /** Returns this task's type marker. */
     public String getType() {
-        return type;
+        return type.getMarker();
     }
 
     /** Returns whether this task has been completed. */
@@ -54,6 +48,6 @@ public abstract class Task {
     /** Returns this task in Miku's task-list display format. */
     @Override
     public String toString() {
-        return "[" + type + "][" + getStatusIcon() + "] " + description;
+        return "[" + type.getMarker() + "][" + getStatusIcon() + "] " + description;
     }
 }

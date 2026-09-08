@@ -105,7 +105,7 @@ public class Parser {
             throw new MikuException("The due date of a deadline cannot be empty!! \u266b");
         }
         DateTimeParser.ParsedDateTime parsedDeadline = DateTimeParser.parse(deadline);
-        return new Deadline(description, parsedDeadline.value(), parsedDeadline.hasTime());
+        return new Deadline(description, parsedDeadline.dateTime(), parsedDeadline.hasTime());
     }
 
     /** Validates an event command and creates its task. */
@@ -121,20 +121,20 @@ public class Parser {
         assert fromIndex >= "event".length() && toIndex > fromIndex
                 : "Event delimiters must follow the command name in order.";
         String description = command.substring("event".length(), fromIndex).trim();
-        String from = command.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String to = command.substring(toIndex + " /to ".length()).trim();
+        String start = command.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String end = command.substring(toIndex + " /to ".length()).trim();
         if (description.isEmpty()) {
             throw new MikuException("The description of an event cannot be empty!! \u266a");
         }
-        if (from.isEmpty()) {
+        if (start.isEmpty()) {
             throw new MikuException("The start of an event cannot be empty!! \u266b");
         }
-        if (to.isEmpty()) {
+        if (end.isEmpty()) {
             throw new MikuException("The end of an event cannot be empty!! \u2728");
         }
-        DateTimeParser.ParsedDateTime parsedFrom = DateTimeParser.parse(from);
-        DateTimeParser.ParsedDateTime parsedTo = DateTimeParser.parse(to);
-        return new Event(description, parsedFrom.value(), parsedFrom.hasTime(),
-                parsedTo.value(), parsedTo.hasTime());
+        DateTimeParser.ParsedDateTime parsedStart = DateTimeParser.parse(start);
+        DateTimeParser.ParsedDateTime parsedEnd = DateTimeParser.parse(end);
+        return new Event(description, parsedStart.dateTime(), parsedStart.hasTime(),
+                parsedEnd.dateTime(), parsedEnd.hasTime());
     }
 }

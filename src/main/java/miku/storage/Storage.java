@@ -15,6 +15,7 @@ import miku.MikuException;
 import miku.task.Deadline;
 import miku.task.Event;
 import miku.task.Task;
+import miku.task.TaskType;
 import miku.task.Todo;
 
 /** Loads and saves Miku's task list as JSON in a local data file. */
@@ -57,37 +58,46 @@ public class Storage {
 
     /** Recreates a task from fields stored in one JSON object. */
     private Task toTask(Map<String, Object> fields) throws MikuException {
-        String type = getString(fields, "type");
+        TaskType taskType = parseTaskType(getString(fields, "type"));
         String description = getString(fields, "description");
-        Task task = switch (type) {
-            case "T" -> new Todo(description);
-            case "D" -> createDeadline(fields, description);
-            case "E" -> createEvent(fields, description);
+        Task task = switch (taskType) {
+            case TODO -> new Todo(description);
+            case DEADLINE -> createDeadline(fields, description);
+            case EVENT -> createEvent(fields, description);
             default -> throw new MikuException("Saved task data contains an unknown task type.");
         };
-        if (getBoolean(fields, "isDone")) {
+        if (getRequiredBoolean(fields, "isDone")) {
             task.markAsDone();
         }
         return task;
     }
 
+    /** Converts a persisted task marker to its matching model type. */
+    private TaskType parseTaskType(String marker) throws MikuException {
+        try {
+            return TaskType.fromMarker(marker);
+        } catch (IllegalArgumentException exception) {
+            throw new MikuException("Saved task data contains an unknown task type.");
+        }
+    }
+
     /** Recreates a deadline and retains whether it displayed a time. */
     private Task createDeadline(Map<String, Object> fields, String description) throws MikuException {
-        LocalDateTime dateTime = parseDateTime(getString(fields, "datetime"));
-        boolean hasTime = getOptionalBoolean(fields, "includesTime",
-                !dateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Deadline(description, dateTime, hasTime);
+        LocalDateTime dueDateTime = parseDateTime(getString(fields, "datetime"));
+        boolean hasDueTime = getOptionalBoolean(fields, "includesTime",
+                !dueDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Deadline(description, dueDateTime, hasDueTime);
     }
 
     /** Recreates an event and retains whether its endpoints displayed times. */
     private Task createEvent(Map<String, Object> fields, String description) throws MikuException {
-        LocalDateTime from = parseDateTime(getString(fields, "from"));
-        LocalDateTime to = parseDateTime(getString(fields, "to"));
+        LocalDateTime startDateTime = parseDateTime(getString(fields, "from"));
+        LocalDateTime endDateTime = parseDateTime(getString(fields, "to"));
         boolean hasStartTime = getOptionalBoolean(fields, "fromIncludesTime",
-                !from.toLocalTime().equals(LocalTime.MIDNIGHT));
+                !startDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
         boolean hasEndTime = getOptionalBoolean(fields, "toIncludesTime",
-                !to.toLocalTime().equals(LocalTime.MIDNIGHT));
-        return new Event(description, from, hasStartTime, to, hasEndTime);
+                !endDateTime.toLocalTime().equals(LocalTime.MIDNIGHT));
+        return new Event(description, startDateTime, hasStartTime, endDateTime, hasEndTime);
     }
 
     /** Parses an ISO-8601 date-time stored in the save file. */
@@ -109,22 +119,21 @@ public class Storage {
     }
 
     /** Gets a required JSON boolean field. */
-    private boolean getBoolean(Map<String, Object> fields, String name) throws MikuException {
-        return getOptionalBoolean(fields, name, false, true);
+    private boolean getRequiredBoolean(Map<String, Object> fields, String name) throws MikuException {
+        return validateBoolean(fields.get(name), name);
     }
 
     /** Gets an optional JSON boolean field, using a fallback for older save files. */
     private boolean getOptionalBoolean(Map<String, Object> fields, String name, boolean fallback) throws MikuException {
-        return getOptionalBoolean(fields, name, fallback, false);
-    }
-
-    /** Gets a boolean field and optionally requires it to be present. */
-    private boolean getOptionalBoolean(Map<String, Object> fields, String name, boolean fallback, boolean required)
-            throws MikuException {
         Object value = fields.get(name);
-        if (value == null && !required) {
+        if (value == null) {
             return fallback;
         }
+        return validateBoolean(value, name);
+    }
+
+    /** Validates and returns a JSON boolean value. */
+    private boolean validateBoolean(Object value, String name) throws MikuException {
         if (!(value instanceof Boolean bool)) {
             throw new MikuException("Saved task data is missing a valid " + name + " field.");
         }
@@ -155,13 +164,13 @@ public class Storage {
         json.append(", \"isDone\": ").append(task.isDone());
         if (task instanceof Deadline deadline) {
             json.append(',');
-            appendStringField(json, "datetime", deadline.getDateTime().toString());
-            json.append(", \"includesTime\": ").append(deadline.hasTime());
+            appendStringField(json, "datetime", deadline.getDueDateTime().toString());
+            json.append(", \"includesTime\": ").append(deadline.hasDueTime());
         } else if (task instanceof Event event) {
             json.append(',');
-            appendStringField(json, "from", event.getFrom().toString());
+            appendStringField(json, "from", event.getStartDateTime().toString());
             json.append(',');
-            appendStringField(json, "to", event.getTo().toString());
+            appendStringField(json, "to", event.getEndDateTime().toString());
             json.append(", \"fromIncludesTime\": ").append(event.hasStartTime());
             json.append(", \"toIncludesTime\": ").append(event.hasEndTime());
         }

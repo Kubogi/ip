@@ -57,6 +57,6 @@ public final class DateTimeParser {
     }
 
     /** Holds a parsed date-time and whether the original input included a time. */
-    public record ParsedDateTime(LocalDateTime value, boolean hasTime) {
+    public record ParsedDateTime(LocalDateTime dateTime, boolean hasTime) {
     }
 }

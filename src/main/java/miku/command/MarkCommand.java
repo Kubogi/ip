@@ -1,10 +1,7 @@
 package miku.command;
 
 import miku.MikuException;
-import miku.storage.Storage;
 import miku.task.Task;
-import miku.task.TaskList;
-import miku.ui.ResponseFormatter;
 
 /** Marks one task as complete. */
 public class MarkCommand extends TaskNumberCommand {
@@ -15,10 +12,10 @@ public class MarkCommand extends TaskNumberCommand {
 
     /** Marks the selected task complete, persists the change, and reports the result. */
     @Override
-    public String execute(TaskList tasks, ResponseFormatter responseFormatter, Storage storage) throws MikuException {
-        Task task = getTask(tasks);
+    public String execute(CommandContext commandContext) throws MikuException {
+        Task task = getTask(commandContext.tasks());
         task.markAsDone();
-        saveTasks(storage, tasks);
-        return responseFormatter.formatTaskMarked(task);
+        saveTasks(commandContext);
+        return commandContext.responseFormatter().formatTaskMarked(task);
     }
 }

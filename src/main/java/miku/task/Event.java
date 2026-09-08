@@ -6,31 +6,31 @@ import miku.parser.DateTimeParser;
 
 /** A task that starts and ends at specified dates or times. */
 public class Event extends Task {
-    private LocalDateTime from;
-    private LocalDateTime to;
-    private boolean hasStartTime;
-    private boolean hasEndTime;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
+    private final boolean hasStartTime;
+    private final boolean hasEndTime;
 
     /** Creates an undone event with its start and end date or time. */
-    public Event(String description, LocalDateTime from, boolean hasStartTime,
-            LocalDateTime to, boolean hasEndTime) {
-        super("E", description);
-        assert from != null : "Events must have a start date and time.";
-        assert to != null : "Events must have an end date and time.";
-        this.from = from;
-        this.to = to;
+    public Event(String description, LocalDateTime startDateTime, boolean hasStartTime,
+            LocalDateTime endDateTime, boolean hasEndTime) {
+        super(TaskType.EVENT, description);
+        assert startDateTime != null : "Events must have a start date and time.";
+        assert endDateTime != null : "Events must have an end date and time.";
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.hasStartTime = hasStartTime;
         this.hasEndTime = hasEndTime;
     }
 
     /** Returns the event's typed start date and time. */
-    public LocalDateTime getFrom() {
-        return from;
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
     }
 
     /** Returns the event's typed end date and time. */
-    public LocalDateTime getTo() {
-        return to;
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
     }
 
     /** Returns whether the event start was entered with an explicit time. */
@@ -46,7 +46,7 @@ public class Event extends Task {
     /** Returns this event in Miku's task-list display format. */
     @Override
     public String toString() {
-        return super.toString() + " (from: " + DateTimeParser.format(from, hasStartTime)
-                + " to: " + DateTimeParser.format(to, hasEndTime) + ")";
+        return super.toString() + " (from: " + DateTimeParser.format(startDateTime, hasStartTime)
+                + " to: " + DateTimeParser.format(endDateTime, hasEndTime) + ")";
     }
 }
