@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 class TaskInvariantTest {
 
     @Test
-    void constructor_unsupportedType_assertionThrown() {
-        assertThrows(AssertionError.class, () -> new TestTask("X", "review notes"));
-    }
-
-    @Test
     void todo_nullDescription_assertionThrown() {
         assertThrows(AssertionError.class, () -> new Todo(null));
     }
@@ -30,12 +25,5 @@ class TaskInvariantTest {
 
         assertThrows(AssertionError.class, () -> new Event("concert", null, false, dateTime, true));
         assertThrows(AssertionError.class, () -> new Event("concert", dateTime, true, null, false));
-    }
-
-    /** Provides a controllable task type for constructor-invariant tests. */
-    private static class TestTask extends Task {
-        private TestTask(String type, String description) {
-            super(type, description);
-        }
     }
 }

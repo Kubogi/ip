@@ -15,6 +15,7 @@ import miku.MikuException;
 import miku.task.Deadline;
 import miku.task.Event;
 import miku.task.Task;
+import miku.task.TaskType;
 import miku.task.Todo;
 
 /** Loads and saves Miku's task list as JSON in a local data file. */
@@ -57,18 +58,27 @@ public class Storage {
 
     /** Recreates a task from fields stored in one JSON object. */
     private Task toTask(Map<String, Object> fields) throws MikuException {
-        String type = getString(fields, "type");
+        TaskType taskType = parseTaskType(getString(fields, "type"));
         String description = getString(fields, "description");
-        Task task = switch (type) {
-            case "T" -> new Todo(description);
-            case "D" -> createDeadline(fields, description);
-            case "E" -> createEvent(fields, description);
+        Task task = switch (taskType) {
+            case TODO -> new Todo(description);
+            case DEADLINE -> createDeadline(fields, description);
+            case EVENT -> createEvent(fields, description);
             default -> throw new MikuException("Saved task data contains an unknown task type.");
         };
         if (getBoolean(fields, "isDone")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /** Converts a persisted task marker to its matching model type. */
+    private TaskType parseTaskType(String marker) throws MikuException {
+        try {
+            return TaskType.fromMarker(marker);
+        } catch (IllegalArgumentException exception) {
+            throw new MikuException("Saved task data contains an unknown task type.");
+        }
     }
 
     /** Recreates a deadline and retains whether it displayed a time. */

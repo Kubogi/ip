@@ -4,6 +4,6 @@ package miku.task;
 public class Todo extends Task {
     /** Creates an undone todo task. */
     public Todo(String description) {
-        super("T", description);
+        super(TaskType.TODO, description);
     }
 }

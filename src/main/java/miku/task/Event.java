@@ -14,7 +14,7 @@ public class Event extends Task {
     /** Creates an undone event with its start and end date or time. */
     public Event(String description, LocalDateTime from, boolean hasStartTime,
             LocalDateTime to, boolean hasEndTime) {
-        super("E", description);
+        super(TaskType.EVENT, description);
         assert from != null : "Events must have a start date and time.";
         assert to != null : "Events must have an end date and time.";
         this.from = from;
