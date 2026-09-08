@@ -1,6 +1,7 @@
 package miku;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +21,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
+            URL mainWindowResource = Main.class.getResource("/view/MainWindow.fxml");
+            assert mainWindowResource != null : "Main window FXML must be packaged.";
+            FXMLLoader fxmlLoader = new FXMLLoader(mainWindowResource);
             AnchorPane mainLayout = fxmlLoader.load();
             MainWindow mainWindow = fxmlLoader.getController();
             mainWindow.setMiku(miku);
