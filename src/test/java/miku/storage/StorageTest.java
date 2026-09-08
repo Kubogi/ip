@@ -1,6 +1,8 @@
 package miku.storage;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,6 +55,28 @@ class StorageTest {
         assertTrue(savedJson.contains("\"type\": \"T\""));
         assertTrue(savedJson.contains("\"type\": \"D\""));
         assertTrue(savedJson.contains("\"type\": \"E\""));
+    }
+
+    @Test
+    void loadTasks_missingCompletionStatus_exceptionThrown() throws IOException {
+        Path saveFile = temporaryDirectory.resolve("miku.json");
+        Files.writeString(saveFile, "[{\"type\": \"T\", \"description\": \"read book\"}]");
+        Storage storage = new Storage(saveFile);
+
+        assertThrows(MikuException.class, storage::loadTasks);
+    }
+
+    @Test
+    void loadTasks_legacyDeadlineWithoutTimeFlag_infersTimeFromTimestamp() throws IOException, MikuException {
+        Path saveFile = temporaryDirectory.resolve("miku.json");
+        Files.writeString(saveFile, "[{\"type\": \"D\", \"description\": \"submit work\", "
+                + "\"isDone\": false, \"datetime\": \"2026-09-08T00:00\"}]");
+        Storage storage = new Storage(saveFile);
+
+        Task loadedTask = storage.loadTasks().get(0);
+        Deadline deadline = assertInstanceOf(Deadline.class, loadedTask);
+
+        assertFalse(deadline.hasDueTime());
     }
 
     /** Represents a future task subtype that Storage has not yet learned to serialize. */

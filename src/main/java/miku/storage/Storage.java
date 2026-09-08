@@ -66,7 +66,7 @@ public class Storage {
             case EVENT -> createEvent(fields, description);
             default -> throw new MikuException("Saved task data contains an unknown task type.");
         };
-        if (getBoolean(fields, "isDone")) {
+        if (getRequiredBoolean(fields, "isDone")) {
             task.markAsDone();
         }
         return task;
@@ -119,22 +119,21 @@ public class Storage {
     }
 
     /** Gets a required JSON boolean field. */
-    private boolean getBoolean(Map<String, Object> fields, String name) throws MikuException {
-        return getOptionalBoolean(fields, name, false, true);
+    private boolean getRequiredBoolean(Map<String, Object> fields, String name) throws MikuException {
+        return validateBoolean(fields.get(name), name);
     }
 
     /** Gets an optional JSON boolean field, using a fallback for older save files. */
     private boolean getOptionalBoolean(Map<String, Object> fields, String name, boolean fallback) throws MikuException {
-        return getOptionalBoolean(fields, name, fallback, false);
-    }
-
-    /** Gets a boolean field and optionally requires it to be present. */
-    private boolean getOptionalBoolean(Map<String, Object> fields, String name, boolean fallback, boolean required)
-            throws MikuException {
         Object value = fields.get(name);
-        if (value == null && !required) {
+        if (value == null) {
             return fallback;
         }
+        return validateBoolean(value, name);
+    }
+
+    /** Validates and returns a JSON boolean value. */
+    private boolean validateBoolean(Object value, String name) throws MikuException {
         if (!(value instanceof Boolean bool)) {
             throw new MikuException("Saved task data is missing a valid " + name + " field.");
         }
