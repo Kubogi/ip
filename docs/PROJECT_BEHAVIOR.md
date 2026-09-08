@@ -9,6 +9,11 @@ to open the GUI. Run the corresponding `shadowJar` task to create
 `build/libs/miku.jar`, then launch it with `java -jar build/libs/miku.jar`. The
 Shadow plugin includes Miku's runtime dependencies in this file. ★
 
+Gradle's development run and test tasks enable Java assertions. To diagnose an
+internal invariant in a JAR build, launch it with
+`java -ea -jar build/libs/miku.jar`; ordinary `java -jar` launches remain
+available for end users. ♪
+
 ## GUI behavior
 
 Users submit commands with Enter or `Send ♪`. Miku places the user message on the
