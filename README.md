@@ -25,14 +25,11 @@ development build launched directly from the JAR, use
 `java -ea -jar build/libs/miku.jar`. The standard `java -jar` command remains
 suitable for end users. ♪
 
-## Avatar images
+## Chat window
 
-Miku runs without images. To display avatars, add these PNG files yourself:
-
-- `src/main/resources/images/DaUser.jpg`
-- `src/main/resources/images/DaMiku.jpg`
-
-The next launch loads either image automatically. ♪
+Miku shows your submitted commands in compact rows and gives replies the width
+needed for task lists. The command word is highlighted, while errors use a
+distinct warning style. The input stays ready for the next command. ♪
 
 ## Commands
 

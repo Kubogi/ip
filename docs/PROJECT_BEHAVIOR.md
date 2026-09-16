@@ -16,14 +16,15 @@ available for end users. ♪
 
 ## GUI behavior
 
-Users submit commands with Enter or `Send ♪`. Miku places the user message on the
-right and its response on the left, automatically scrolling to the newest
-dialog. Empty commands display only Miku's existing validation error. `bye`
-shows Miku's farewell, disables input, and closes the window after one second.
+Users submit commands with Enter or `Send ♪`. Submitted commands appear as
+compact, right-aligned rows with the command word emphasized. Miku's replies
+appear on the left and expand to fit long text; errors use a distinct warning
+style. The chat scrolls to the newest message, and the command field keeps focus
+after sending. Empty commands display only Miku's validation error. `bye` shows
+Miku's farewell, disables input, and closes the window after one second.
 
-The interface remains usable without avatar files. Place optional PNG avatars at
-`src/main/resources/images/DaUser.jpg` and
-`src/main/resources/images/DaMiku.jpg`; they are loaded on the next launch.
+The chat does not display avatars, leaving more room for task lists and long
+responses. The input field offers a short example command. ☆
 
 ## Commands
 
@@ -53,8 +54,9 @@ description and completion status unchanged. ♪
 
 Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON and
 loads it at startup. An unreadable or invalid save file produces a friendly chat
-warning and starts with an empty task list. Invalid commands and task fields show
-a Miku-style chat error while leaving the app ready for the next command.
+warning in a separate error-style message and starts with an empty task list.
+Invalid commands and task fields show an error-style reply while leaving the app
+ready for the next command.
 
 Tasks display type and completion markers: `[T]`, `[D]`, `[E]`, `[★]`, and `[ ]`.
 User-facing messages remain warm and energetic, using symbols such as ★, ☆, ♪,
@@ -70,6 +72,5 @@ JUnit suite covers core task, parsing, date-time, and GUI-facing response logic.
 
 - `src/main/java/miku/Miku.java` — command coordination and response API.
 - `src/main/java/miku/ui/MainWindow.java` — GUI controller.
-- `src/main/resources/view/` — FXML chat layouts.
+- `src/main/resources/view/` — FXML main window layout.
 - `src/main/resources/css/` — responsive Miku styling.
-- `src/main/resources/images/` — optional user-provided avatars.

@@ -5,8 +5,8 @@ import java.net.URL;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import miku.ui.MainWindow;
 
@@ -24,12 +24,15 @@ public class Main extends Application {
             URL mainWindowResource = Main.class.getResource("/view/MainWindow.fxml");
             assert mainWindowResource != null : "Main window FXML must be packaged.";
             FXMLLoader fxmlLoader = new FXMLLoader(mainWindowResource);
-            AnchorPane mainLayout = fxmlLoader.load();
+            Parent mainLayout = fxmlLoader.load();
             MainWindow mainWindow = fxmlLoader.getController();
             mainWindow.setMiku(miku);
             mainWindow.setExitHandler(stage::close);
 
             Scene scene = new Scene(mainLayout);
+            URL dialogStyles = Main.class.getResource("/css/dialog-box.css");
+            assert dialogStyles != null : "Dialog styling must be packaged.";
+            scene.getStylesheets().add(dialogStyles.toExternalForm());
             stage.setTitle("Miku");
             stage.setMinHeight(MINIMUM_WINDOW_HEIGHT);
             stage.setMinWidth(MINIMUM_WINDOW_WIDTH);

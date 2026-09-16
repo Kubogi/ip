@@ -1,60 +1,76 @@
 package miku.ui;
 
-import java.io.IOException;
-import java.net.URL;
-
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 
-/** Displays one chat message alongside an optional speaker avatar. */
+/** Displays a compact command row or a response from Miku. */
 public class DialogBox extends HBox {
-    @FXML
-    private Label dialog;
-    @FXML
-    private ImageView displayPicture;
-
-    /** Loads the dialog FXML and fills it with the supplied message and optional avatar. */
-    private DialogBox(String text, Image image) {
-        try {
-            URL dialogBoxResource = DialogBox.class.getResource("/view/DialogBox.fxml");
-            assert dialogBoxResource != null : "Dialog box FXML must be packaged.";
-            FXMLLoader fxmlLoader = new FXMLLoader(dialogBoxResource);
-            fxmlLoader.setController(this);
-            fxmlLoader.setRoot(this);
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new IllegalStateException("A chat dialog could not be loaded.", exception);
-        }
-        assert dialog != null && displayPicture != null : "Dialog box FXML must inject its controls.";
-        dialog.setText(text);
-        displayPicture.setImage(image);
-        if (image == null) {
-            displayPicture.setManaged(false);
-            displayPicture.setVisible(false);
-        }
+    /** Creates an empty row that a factory method fills with message content. */
+    private DialogBox() {
     }
 
-    /** Returns a right-aligned dialog for a user message. */
-    public static DialogBox getUserDialog(String text, Image image) {
-        return new DialogBox(text, image);
-    }
+    /** Returns a right-aligned row with the submitted command word emphasized. */
+    public static DialogBox getUserDialog(String input) {
+        DialogBox dialogBox = new DialogBox();
+        dialogBox.setAlignment(Pos.TOP_RIGHT);
+        dialogBox.getStyleClass().add("command-row");
 
-    /** Returns a left-aligned dialog for a response from Miku. */
-    public static DialogBox getMikuDialog(String text, Image image) {
-        DialogBox dialogBox = new DialogBox(text, image);
-        dialogBox.flip();
+        CommandParts parts = splitCommand(input);
+        Text speaker = styledText("You  ", "speaker-cue");
+        Text leadingWhitespace = new Text(parts.leadingWhitespace());
+        Text command = styledText(parts.command(), "command-verb");
+        Text arguments = new Text(parts.arguments());
+        TextFlow commandText = new TextFlow(speaker, leadingWhitespace, command, arguments);
+        commandText.setTextAlignment(TextAlignment.RIGHT);
+        commandText.setMaxWidth(Double.MAX_VALUE);
+        commandText.getStyleClass().add("command-content");
+        HBox.setHgrow(commandText, Priority.ALWAYS);
+        dialogBox.getChildren().add(commandText);
         return dialogBox;
     }
 
-    /** Moves the avatar to the left and aligns the dialog with Miku's responses. */
-    private void flip() {
-        setAlignment(Pos.TOP_LEFT);
-        getChildren().setAll(displayPicture, dialog);
-        dialog.getStyleClass().add("reply-label");
+    /** Returns a left-aligned reply, with distinct styling when it reports an error. */
+    public static DialogBox getMikuDialog(String text, boolean isError) {
+        DialogBox dialogBox = new DialogBox();
+        dialogBox.setAlignment(Pos.TOP_LEFT);
+        dialogBox.getStyleClass().add(isError ? "error-row" : "reply-row");
+
+        Label message = new Label(text);
+        message.setWrapText(true);
+        message.setMinWidth(0);
+        message.setMaxWidth(Double.MAX_VALUE);
+        message.getStyleClass().add("reply-content");
+        dialogBox.getChildren().add(message);
+        return dialogBox;
+    }
+
+    /** Splits a command for display without changing the submitted text. */
+    static CommandParts splitCommand(String input) {
+        int commandStart = 0;
+        while (commandStart < input.length() && Character.isWhitespace(input.charAt(commandStart))) {
+            commandStart++;
+        }
+        int commandEnd = commandStart;
+        while (commandEnd < input.length() && !Character.isWhitespace(input.charAt(commandEnd))) {
+            commandEnd++;
+        }
+        return new CommandParts(input.substring(0, commandStart), input.substring(commandStart, commandEnd),
+                input.substring(commandEnd));
+    }
+
+    /** Creates text with one CSS role in the command row. */
+    private static Text styledText(String content, String styleClass) {
+        Text text = new Text(content);
+        text.getStyleClass().add(styleClass);
+        return text;
+    }
+
+    /** Holds the unchanged pieces of a submitted command. */
+    record CommandParts(String leadingWhitespace, String command, String arguments) {
     }
 }

@@ -1,21 +1,20 @@
 package miku.ui;
 
-import java.net.URL;
 import java.util.Objects;
 
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import miku.Miku;
+import miku.MikuResponse;
 
 /** Controls the main JavaFX chat window for Miku. */
-public class MainWindow extends AnchorPane {
+public class MainWindow {
     private static final Duration FAREWELL_DURATION = Duration.seconds(1);
 
     @FXML
@@ -27,8 +26,6 @@ public class MainWindow extends AnchorPane {
     @FXML
     private Button sendButton;
 
-    private final Image userImage = loadImage("/images/DaUser.jpg");
-    private final Image mikuImage = loadImage("/images/DaMiku.jpg");
     private Miku miku;
     private Runnable exitHandler = () -> { };
 
@@ -38,12 +35,15 @@ public class MainWindow extends AnchorPane {
         assert scrollPane != null && dialogContainer != null && userInput != null && sendButton != null
                 : "Main window FXML must inject all chat controls.";
         dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
+        Platform.runLater(userInput::requestFocus);
     }
 
-    /** Supplies Miku's application logic and displays its opening greeting. */
+    /** Supplies Miku's application logic and displays its opening messages. */
     public void setMiku(Miku miku) {
         this.miku = Objects.requireNonNull(miku);
-        dialogContainer.getChildren().add(DialogBox.getMikuDialog(miku.getWelcomeMessage(), mikuImage));
+        for (MikuResponse response : miku.getStartupResponses()) {
+            dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError()));
+        }
     }
 
     /** Supplies the action that runs after Miku's farewell has been shown. */
@@ -57,12 +57,15 @@ public class MainWindow extends AnchorPane {
         assert miku != null : "Main window must receive Miku before handling input.";
         String input = userInput.getText();
         if (!input.isBlank()) {
-            dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
+            dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
         }
-        dialogContainer.getChildren().add(DialogBox.getMikuDialog(miku.getResponse(input), mikuImage));
+        MikuResponse response = miku.processCommand(input);
+        dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError()));
         userInput.clear();
         if (miku.isExitRequested()) {
             closeAfterFarewell();
+        } else {
+            userInput.requestFocus();
         }
     }
 
@@ -73,14 +76,5 @@ public class MainWindow extends AnchorPane {
         PauseTransition farewellPause = new PauseTransition(FAREWELL_DURATION);
         farewellPause.setOnFinished(event -> exitHandler.run());
         farewellPause.play();
-    }
-
-    /** Loads an optional avatar image, returning no image until the user supplies the resource. */
-    private Image loadImage(String resourcePath) {
-        URL imageResource = MainWindow.class.getResource(resourcePath);
-        if (imageResource == null) {
-            return null;
-        }
-        return new Image(imageResource.toExternalForm());
     }
 }
