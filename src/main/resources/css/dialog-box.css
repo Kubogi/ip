@@ -3,21 +3,21 @@
 }
 
 .command-content {
-    -fx-padding: 2px 0;
+    -fx-background-color: #fff0f2;
+    -fx-background-radius: 10px 10px 3px 10px;
+    -fx-border-color: #e4a8b5;
+    -fx-border-radius: 10px 10px 3px 10px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 10px;
 }
 
 .command-content .text {
-    -fx-fill: #34464c;
+    -fx-fill: #3d2930;
     -fx-font-size: 13px;
 }
 
-.command-content .speaker-cue {
-    -fx-fill: #66797d;
-    -fx-font-size: 11px;
-}
-
 .command-content .command-verb {
-    -fx-fill: #0b6f6a;
+    -fx-fill: #9b2e4d;
     -fx-font-weight: bold;
 }
 
@@ -27,10 +27,10 @@
 }
 
 .reply-content {
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 7px;
-    -fx-border-color: #d9e7e7;
-    -fx-border-radius: 7px;
+    -fx-background-color: #eaf7ff;
+    -fx-background-radius: 10px 10px 10px 3px;
+    -fx-border-color: #a5d5e9;
+    -fx-border-radius: 10px 10px 10px 3px;
     -fx-border-width: 1px;
     -fx-padding: 8px 10px;
     -fx-text-fill: #22313b;

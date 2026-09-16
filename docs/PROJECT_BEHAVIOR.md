@@ -16,15 +16,19 @@ available for end users. ♪
 
 ## GUI behavior
 
-Users submit commands with Enter or `Send ♪`. Submitted commands appear as
-compact, right-aligned rows with the command word emphasized. Miku's replies
-appear on the left and expand to fit long text; errors use a distinct warning
-style. The chat scrolls to the newest message, and the command field keeps focus
-after sending. Empty commands display only Miku's validation error. `bye` shows
-Miku's farewell, disables input, and closes the window after one second.
+Users submit commands with Enter or `Send ♪`. Submitted commands appear in
+compact, right-aligned rosy bubbles with the command word emphasized. Miku's
+blue replies appear on the left and expand to fit long text; errors use a
+distinct warning style. The chat scrolls to the newest message, and the command
+field keeps focus after sending. Empty commands display only Miku's validation
+error. `bye` shows Miku's farewell, disables input, and closes the window after
+one second.
 
-The chat does not display avatars, leaving more room for task lists and long
-responses. The input field offers a short example command. ☆
+Both speakers have 48 px avatars beside their bubbles, loaded from
+`src/main/resources/images/DaUser.jpg` and
+`src/main/resources/images/DaMiku.jpg`. If an image is missing, its avatar space
+is hidden so the chat remains usable. Chat text uses Trebuchet MS where available
+and the platform font otherwise. The input field offers a short example command. ☆
 
 ## Commands
 

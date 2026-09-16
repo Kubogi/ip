@@ -1,5 +1,6 @@
 package miku.ui;
 
+import java.net.URL;
 import java.util.Objects;
 
 import javafx.animation.PauseTransition;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import miku.Miku;
@@ -26,6 +28,8 @@ public class MainWindow {
     @FXML
     private Button sendButton;
 
+    private final Image userImage = loadImage("/images/DaUser.jpg");
+    private final Image mikuImage = loadImage("/images/DaMiku.jpg");
     private Miku miku;
     private Runnable exitHandler = () -> { };
 
@@ -42,7 +46,7 @@ public class MainWindow {
     public void setMiku(Miku miku) {
         this.miku = Objects.requireNonNull(miku);
         for (MikuResponse response : miku.getStartupResponses()) {
-            dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError()));
+            dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError(), mikuImage));
         }
     }
 
@@ -57,10 +61,10 @@ public class MainWindow {
         assert miku != null : "Main window must receive Miku before handling input.";
         String input = userInput.getText();
         if (!input.isBlank()) {
-            dialogContainer.getChildren().add(DialogBox.getUserDialog(input));
+            dialogContainer.getChildren().add(DialogBox.getUserDialog(input, userImage));
         }
         MikuResponse response = miku.processCommand(input);
-        dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError()));
+        dialogContainer.getChildren().add(DialogBox.getMikuDialog(response.text(), response.isError(), mikuImage));
         userInput.clear();
         if (miku.isExitRequested()) {
             closeAfterFarewell();
@@ -76,5 +80,14 @@ public class MainWindow {
         PauseTransition farewellPause = new PauseTransition(FAREWELL_DURATION);
         farewellPause.setOnFinished(event -> exitHandler.run());
         farewellPause.play();
+    }
+
+    /** Loads an optional avatar without preventing chat messages when the image is unavailable. */
+    private Image loadImage(String resourcePath) {
+        URL imageResource = MainWindow.class.getResource(resourcePath);
+        if (imageResource == null) {
+            return null;
+        }
+        return new Image(imageResource.toExternalForm());
     }
 }

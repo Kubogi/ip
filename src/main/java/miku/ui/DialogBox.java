@@ -2,40 +2,46 @@ package miku.ui;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
 /** Displays a compact command row or a response from Miku. */
 public class DialogBox extends HBox {
+    private static final double AVATAR_SIZE = 48;
+    private static final double AVATAR_CORNER_SIZE = 12;
+    private static final double MESSAGE_GAP = 8;
+
     /** Creates an empty row that a factory method fills with message content. */
     private DialogBox() {
+        setSpacing(MESSAGE_GAP);
     }
 
     /** Returns a right-aligned row with the submitted command word emphasized. */
-    public static DialogBox getUserDialog(String input) {
+    public static DialogBox getUserDialog(String input, Image avatarImage) {
         DialogBox dialogBox = new DialogBox();
         dialogBox.setAlignment(Pos.TOP_RIGHT);
         dialogBox.getStyleClass().add("command-row");
 
         CommandParts parts = splitCommand(input);
-        Text speaker = styledText("You  ", "speaker-cue");
         Text leadingWhitespace = new Text(parts.leadingWhitespace());
         Text command = styledText(parts.command(), "command-verb");
         Text arguments = new Text(parts.arguments());
-        TextFlow commandText = new TextFlow(speaker, leadingWhitespace, command, arguments);
+        TextFlow commandText = new TextFlow(leadingWhitespace, command, arguments);
         commandText.setTextAlignment(TextAlignment.RIGHT);
+        commandText.setMinWidth(0);
         commandText.setMaxWidth(Double.MAX_VALUE);
         commandText.getStyleClass().add("command-content");
-        HBox.setHgrow(commandText, Priority.ALWAYS);
-        dialogBox.getChildren().add(commandText);
+        dialogBox.getChildren().addAll(commandText, createAvatar(avatarImage));
         return dialogBox;
     }
 
     /** Returns a left-aligned reply, with distinct styling when it reports an error. */
-    public static DialogBox getMikuDialog(String text, boolean isError) {
+    public static DialogBox getMikuDialog(String text, boolean isError, Image avatarImage) {
         DialogBox dialogBox = new DialogBox();
         dialogBox.setAlignment(Pos.TOP_LEFT);
         dialogBox.getStyleClass().add(isError ? "error-row" : "reply-row");
@@ -45,8 +51,25 @@ public class DialogBox extends HBox {
         message.setMinWidth(0);
         message.setMaxWidth(Double.MAX_VALUE);
         message.getStyleClass().add("reply-content");
-        dialogBox.getChildren().add(message);
+        dialogBox.getChildren().addAll(createAvatar(avatarImage), message);
         return dialogBox;
+    }
+
+    /** Creates a small rounded avatar, omitting its layout space when no image is available. */
+    private static ImageView createAvatar(Image image) {
+        ImageView avatar = new ImageView(image);
+        avatar.setFitWidth(AVATAR_SIZE);
+        avatar.setFitHeight(AVATAR_SIZE);
+        avatar.setPreserveRatio(true);
+        Rectangle clip = new Rectangle(AVATAR_SIZE, AVATAR_SIZE);
+        clip.setArcWidth(AVATAR_CORNER_SIZE);
+        clip.setArcHeight(AVATAR_CORNER_SIZE);
+        avatar.setClip(clip);
+        if (image == null) {
+            avatar.setManaged(false);
+            avatar.setVisible(false);
+        }
+        return avatar;
     }
 
     /** Splits a command for display without changing the submitted text. */

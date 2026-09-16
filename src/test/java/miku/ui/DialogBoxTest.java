@@ -25,4 +25,12 @@ class DialogBoxTest {
         assertEquals("sparkle", parts.command());
         assertEquals(" later", parts.arguments());
     }
+
+    @Test
+    void splitCommand_commandWithoutArguments_hasEmptyRemainder() {
+        DialogBox.CommandParts parts = DialogBox.splitCommand("list");
+
+        assertEquals("list", parts.command());
+        assertEquals("", parts.arguments());
+    }
 }

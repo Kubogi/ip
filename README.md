@@ -27,9 +27,9 @@ suitable for end users. ♪
 
 ## Chat window
 
-Miku shows your submitted commands in compact rows and gives replies the width
-needed for task lists. The command word is highlighted, while errors use a
-distinct warning style. The input stays ready for the next command. ♪
+Miku shows your submitted commands in rosy bubbles and its replies in blue
+bubbles, with small avatars beside each. The command word is highlighted, while
+errors use a distinct warning style. The input stays ready for the next command. ♪
 
 ## Commands
 
