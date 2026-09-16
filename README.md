@@ -28,8 +28,11 @@ suitable for end users. ♪
 ## Chat window
 
 Miku shows your submitted commands in rosy bubbles and its replies in blue
-bubbles, with small avatars beside each. The command word is highlighted, while
-errors use a distinct warning style. The input stays ready for the next command. ♪
+bubbles, with small avatars beside each. Recognized command words and their
+syntax markers (`/by`, `/from`, `/to`) are highlighted in teal, even if the
+arguments need correction. Unknown command words stay plain. An error keeps
+Miku's blue bubble and emphasizes only `OOPS!!!` in bold red. The input stays
+ready for the next command. ♪
 
 ## Commands
 

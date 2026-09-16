@@ -1,7 +1,9 @@
 package miku.parser;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -12,6 +14,19 @@ import miku.command.RescheduleCommand;
 
 /** Tests parser validation for commands with high-value input rules. */
 class ParserTest {
+
+    @Test
+    void isRecognizedCommandWord_knownWordsRecognizedEvenWithoutValidArguments() {
+        String[] words = {"bye", "list", "find", "mark", "unmark", "delete",
+            "reschedule", "todo", "deadline", "event"};
+        for (String word : words) {
+            assertTrue(Parser.isRecognizedCommandWord(word), word);
+        }
+        assertFalse(Parser.isRecognizedCommandWord("sparkle"));
+        assertFalse(Parser.isRecognizedCommandWord("/by"));
+        assertFalse(Parser.isRecognizedCommandWord(""));
+        assertFalse(Parser.isRecognizedCommandWord("Mark"));
+    }
 
     @Test
     void parse_findWithKeyword_returnsFindCommand() throws MikuException {

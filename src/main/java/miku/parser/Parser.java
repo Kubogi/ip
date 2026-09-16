@@ -17,6 +17,15 @@ import miku.task.Todo;
 
 /** Converts raw user input into executable Miku commands. */
 public class Parser {
+    /** Returns whether the first word names a command, regardless of its arguments. */
+    public static boolean isRecognizedCommandWord(String word) {
+        return switch (word) {
+            case "bye", "list", "find", "mark", "unmark", "delete", "reschedule", "todo", "deadline", "event"
+                    -> true;
+            default -> false;
+        };
+    }
+
     /** Parses one normalized user command. */
     public Command parse(String command) throws MikuException {
         if (command.isEmpty()) {

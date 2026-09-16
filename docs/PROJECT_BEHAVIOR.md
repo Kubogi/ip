@@ -17,12 +17,14 @@ available for end users. ♪
 ## GUI behavior
 
 Users submit commands with Enter or `Send ♪`. Submitted commands appear in
-compact, right-aligned rosy bubbles with the command word emphasized. Miku's
-blue replies appear on the left and expand to fit long text; errors use a
-distinct warning style. The chat scrolls to the newest message, and the command
-field keeps focus after sending. Empty commands display only Miku's validation
-error. `bye` shows Miku's farewell, disables input, and closes the window after
-one second.
+compact, right-aligned rosy bubbles. Recognized command words and their
+applicable syntax markers (`/by`, `/from`, `/to`) appear in teal even when their
+arguments are invalid; unknown command words remain plain. Miku's blue replies
+appear on the left and expand to fit long text. Errors use the same blue bubble,
+with only the leading `OOPS!!!` in bold red. The chat scrolls to the newest
+message, and the command field keeps focus after sending. Empty commands display
+only Miku's validation error. `bye` shows Miku's farewell, disables input, and
+closes the window after one second.
 
 Both speakers have 48 px avatars beside their bubbles, loaded from
 `src/main/resources/images/DaUser.jpg` and
@@ -58,9 +60,9 @@ description and completion status unchanged. ♪
 
 Miku automatically saves task-list changes to `data/miku.json` as UTF-8 JSON and
 loads it at startup. An unreadable or invalid save file produces a friendly chat
-warning in a separate error-style message and starts with an empty task list.
-Invalid commands and task fields show an error-style reply while leaving the app
-ready for the next command.
+warning in a separate Miku bubble and starts with an empty task list. Invalid
+commands and task fields show a reply with the highlighted error prefix while
+leaving the app ready for the next command.
 
 Tasks display type and completion markers: `[T]`, `[D]`, `[E]`, `[★]`, and `[ ]`.
 User-facing messages remain warm and energetic, using symbols such as ★, ☆, ♪,

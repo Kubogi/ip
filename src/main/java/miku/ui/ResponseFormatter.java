@@ -7,6 +7,8 @@ import miku.task.TaskList;
 
 /** Formats Miku's task responses for display in any user interface. */
 public class ResponseFormatter {
+    static final String ERROR_PREFIX = "OOPS!!!";
+
     /** Returns Miku's welcome message. */
     public String formatWelcome() {
         return "Hello! I'm Hatsune Miku ♪\nWhat can I do for you?";
@@ -14,7 +16,7 @@ public class ResponseFormatter {
 
     /** Returns the warning shown when saved tasks cannot be restored. */
     public String formatLoadingError() {
-        return "OOPS!!! Miku could not load saved tasks, so we're starting with an empty list ♪";
+        return ERROR_PREFIX + " Miku could not load saved tasks, so we're starting with an empty list ♪";
     }
 
     /** Returns the current task list as displayable text. */
@@ -59,7 +61,7 @@ public class ResponseFormatter {
 
     /** Returns Miku's friendly formatting for command errors. */
     public String formatError(String message) {
-        return "OOPS!!! " + message;
+        return ERROR_PREFIX + ' ' + message;
     }
 
     /** Formats a heading and numbered task collection. */
