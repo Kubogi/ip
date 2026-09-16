@@ -1,6 +1,7 @@
 package miku;
 
 import java.io.IOException;
+import java.util.List;
 
 import miku.command.Command;
 import miku.command.CommandContext;
@@ -39,8 +40,22 @@ public class Miku {
         return responseFormatter.formatWelcome();
     }
 
+    /** Returns separate greeting and warning messages for the GUI. */
+    public List<MikuResponse> getStartupResponses() {
+        MikuResponse greeting = new MikuResponse(responseFormatter.formatWelcome(), false);
+        if (hasLoadingError) {
+            return List.of(greeting, new MikuResponse(responseFormatter.formatLoadingError(), true));
+        }
+        return List.of(greeting);
+    }
+
     /** Processes one user command and returns the response that should appear in the chat. */
     public String getResponse(String input) {
+        return processCommand(input).text();
+    }
+
+    /** Processes one user command and identifies errors for the GUI. */
+    public MikuResponse processCommand(String input) {
         try {
             Command command = parser.parse(input == null ? "" : input.trim());
             assert command != null : "Parser must return a command for valid input.";
@@ -48,9 +63,9 @@ public class Miku {
             String response = command.execute(commandContext);
             assert response != null : "Commands must return a response for the chat interface.";
             isExitRequested = command.isExit();
-            return response;
+            return new MikuResponse(response, false);
         } catch (MikuException exception) {
-            return responseFormatter.formatError(exception.getMessage());
+            return new MikuResponse(responseFormatter.formatError(exception.getMessage()), true);
         }
     }
 

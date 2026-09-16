@@ -54,6 +54,19 @@ class MikuTest {
     }
 
     @Test
+    void processCommand_validAndInvalidCommands_identifiesErrors() {
+        Miku miku = new Miku(new Storage(temporaryDirectory.resolve("miku.json")));
+
+        MikuResponse success = miku.processCommand("todo read book");
+        MikuResponse failure = miku.processCommand("mark 99");
+
+        assertFalse(success.isError());
+        assertTrue(success.text().contains("read book"));
+        assertTrue(failure.isError());
+        assertTrue(failure.text().startsWith("OOPS!!!"));
+    }
+
+    @Test
     void getResponse_byeCommand_returnsFarewellAndRequestsExit() {
         Miku miku = new Miku(new Storage(temporaryDirectory.resolve("miku.json")));
 
@@ -146,6 +159,9 @@ class MikuTest {
         Miku miku = new Miku(new Storage(saveFile));
 
         assertTrue(miku.getWelcomeMessage().contains("could not load saved tasks"));
+        assertEquals(2, miku.getStartupResponses().size());
+        assertFalse(miku.getStartupResponses().get(0).isError());
+        assertTrue(miku.getStartupResponses().get(1).isError());
         assertFalse(miku.isExitRequested());
     }
 
