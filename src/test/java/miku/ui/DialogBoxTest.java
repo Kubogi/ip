@@ -13,7 +13,7 @@ class DialogBoxTest {
     void splitCommand_leadingSpaceAndArguments_preservesSubmittedText() {
         String input = "  deadline submit report /by 2026-09-20  ";
 
-        DialogBox.CommandParts parts = DialogBox.splitCommand(input);
+        DialogTextSplitter.CommandParts parts = DialogTextSplitter.splitCommand(input);
 
         assertEquals("  ", parts.leadingWhitespace());
         assertEquals("deadline", parts.command());
@@ -23,7 +23,7 @@ class DialogBoxTest {
 
     @Test
     void splitCommand_unknownCommand_preservesFirstWord() {
-        DialogBox.CommandParts parts = DialogBox.splitCommand("sparkle later");
+        DialogTextSplitter.CommandParts parts = DialogTextSplitter.splitCommand("sparkle later");
 
         assertEquals("sparkle", parts.command());
         assertEquals(" later", parts.arguments());
@@ -31,7 +31,7 @@ class DialogBoxTest {
 
     @Test
     void splitCommand_commandWithoutArguments_hasEmptyRemainder() {
-        DialogBox.CommandParts parts = DialogBox.splitCommand("list");
+        DialogTextSplitter.CommandParts parts = DialogTextSplitter.splitCommand("list");
 
         assertEquals("list", parts.command());
         assertEquals("", parts.arguments());
@@ -41,49 +41,53 @@ class DialogBoxTest {
     void splitArguments_deadlineMarker_preservesTextAndMarksBy() {
         String arguments = " submit report /by 2026-09-20";
 
-        List<DialogBox.ArgumentPart> parts = DialogBox.splitArguments("deadline", arguments, true);
+        List<DialogTextSplitter.ArgumentPart> parts = DialogTextSplitter.splitArguments(
+                "deadline", arguments, true);
 
-        assertEquals(arguments, parts.stream().map(DialogBox.ArgumentPart::text).reduce("", String::concat));
-        assertEquals(List.of("/by"), parts.stream().filter(DialogBox.ArgumentPart::isMarker)
-                .map(DialogBox.ArgumentPart::text).toList());
+        assertEquals(arguments, parts.stream().map(DialogTextSplitter.ArgumentPart::text)
+                .reduce("", String::concat));
+        assertEquals(List.of("/by"), parts.stream().filter(DialogTextSplitter.ArgumentPart::isMarker)
+                .map(DialogTextSplitter.ArgumentPart::text).toList());
     }
 
     @Test
     void splitArguments_eventMarkers_marksFromAndToOnly() {
-        List<DialogBox.ArgumentPart> parts = DialogBox.splitArguments("event",
+        List<DialogTextSplitter.ArgumentPart> parts = DialogTextSplitter.splitArguments("event",
                 " rehearsal /from 2026-09-20 /to 2026-09-21 /by note", true);
 
-        assertEquals(List.of("/from", "/to"), parts.stream().filter(DialogBox.ArgumentPart::isMarker)
-                .map(DialogBox.ArgumentPart::text).toList());
+        assertEquals(List.of("/from", "/to"), parts.stream().filter(DialogTextSplitter.ArgumentPart::isMarker)
+                .map(DialogTextSplitter.ArgumentPart::text).toList());
     }
 
     @Test
     void splitArguments_rescheduleMarkers_marksBothSupportedForms() {
-        List<DialogBox.ArgumentPart> deadline = DialogBox.splitArguments("reschedule",
+        List<DialogTextSplitter.ArgumentPart> deadline = DialogTextSplitter.splitArguments("reschedule",
                 " 2 /by 2026-09-20", true);
-        List<DialogBox.ArgumentPart> event = DialogBox.splitArguments("reschedule",
+        List<DialogTextSplitter.ArgumentPart> event = DialogTextSplitter.splitArguments("reschedule",
                 " 2 /from 2026-09-20 /to 2026-09-21", true);
 
-        assertEquals(List.of("/by"), deadline.stream().filter(DialogBox.ArgumentPart::isMarker)
-                .map(DialogBox.ArgumentPart::text).toList());
-        assertEquals(List.of("/from", "/to"), event.stream().filter(DialogBox.ArgumentPart::isMarker)
-                .map(DialogBox.ArgumentPart::text).toList());
+        assertEquals(List.of("/by"), deadline.stream().filter(DialogTextSplitter.ArgumentPart::isMarker)
+                .map(DialogTextSplitter.ArgumentPart::text).toList());
+        assertEquals(List.of("/from", "/to"), event.stream().filter(DialogTextSplitter.ArgumentPart::isMarker)
+                .map(DialogTextSplitter.ArgumentPart::text).toList());
     }
 
     @Test
     void splitArguments_literalMarkerOrInvalidCommand_doesNotMarkSyntax() {
-        List<DialogBox.ArgumentPart> literal = DialogBox.splitArguments("todo", " write /by hand", true);
-        List<DialogBox.ArgumentPart> invalid = DialogBox.splitArguments("deadline", " report /by 2026-09-20", false);
+        List<DialogTextSplitter.ArgumentPart> literal = DialogTextSplitter.splitArguments(
+                "todo", " write /by hand", true);
+        List<DialogTextSplitter.ArgumentPart> invalid = DialogTextSplitter.splitArguments(
+                "deadline", " report /by 2026-09-20", false);
 
-        assertTrue(literal.stream().noneMatch(DialogBox.ArgumentPart::isMarker));
-        assertTrue(invalid.stream().noneMatch(DialogBox.ArgumentPart::isMarker));
+        assertTrue(literal.stream().noneMatch(DialogTextSplitter.ArgumentPart::isMarker));
+        assertTrue(invalid.stream().noneMatch(DialogTextSplitter.ArgumentPart::isMarker));
     }
 
     @Test
     void splitReply_loadingWarning_highlightsOnlyPrefixAndPreservesText() {
         String warning = new ResponseFormatter().formatLoadingError();
 
-        DialogBox.ReplyParts parts = DialogBox.splitReply(warning, true);
+        DialogTextSplitter.ReplyParts parts = DialogTextSplitter.splitReply(warning, true);
 
         assertEquals("OOPS!!!", parts.highlightedPrefix());
         assertEquals(warning, parts.highlightedPrefix() + parts.remainingText());
@@ -93,7 +97,7 @@ class DialogBoxTest {
     void splitReply_ordinaryOopsMessage_hasNoHighlightedPrefix() {
         String message = "Oops... I've marked this task as not done yet ♪";
 
-        DialogBox.ReplyParts parts = DialogBox.splitReply(message, false);
+        DialogTextSplitter.ReplyParts parts = DialogTextSplitter.splitReply(message, false);
 
         assertEquals("", parts.highlightedPrefix());
         assertEquals(message, parts.remainingText());
@@ -103,7 +107,7 @@ class DialogBoxTest {
     void splitReply_errorWithoutKnownPrefix_keepsWholeMessageReadable() {
         String message = "Something went wrong";
 
-        DialogBox.ReplyParts parts = DialogBox.splitReply(message, true);
+        DialogTextSplitter.ReplyParts parts = DialogTextSplitter.splitReply(message, true);
 
         assertEquals("", parts.highlightedPrefix());
         assertEquals(message, parts.remainingText());
