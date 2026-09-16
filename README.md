@@ -27,6 +27,9 @@ suitable for end users. ♪
 
 ## Chat window
 
+The resizable window opens at 440 × 660 px. Miku's portrait background shows
+through a light tint behind the conversation. ☆
+
 Miku shows your submitted commands in rosy bubbles and its replies in blue
 bubbles, with small avatars beside each. Recognized command words and their
 syntax markers (`/by`, `/from`, `/to`) are highlighted in teal, even if the

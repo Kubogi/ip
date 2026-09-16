@@ -1,5 +1,9 @@
 .root {
     -fx-background-color: #f6fafa;
+    -fx-background-image: url("../images/bg.jpg");
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
     -fx-font-family: "Trebuchet MS";
     -fx-font-size: 14px;
 }
@@ -49,9 +53,12 @@
     -fx-border-color: #06443f;
 }
 
-.scroll-pane,
-.scroll-pane .viewport {
+.scroll-pane {
     -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: rgba(246, 250, 250, 0.52);
 }
 
 .scroll-bar {

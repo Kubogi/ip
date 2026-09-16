@@ -16,6 +16,10 @@ available for end users. ♪
 
 ## GUI behavior
 
+The window opens at 440 × 660 px and can be resized. Its chat area shows
+`src/main/resources/images/bg.jpg` beneath a light tint so messages stay easy
+to read. ☆
+
 Users submit commands with Enter or `Send ♪`. Submitted commands appear in
 compact, right-aligned rosy bubbles. Recognized command words and their
 applicable syntax markers (`/by`, `/from`, `/to`) appear in teal even when their
