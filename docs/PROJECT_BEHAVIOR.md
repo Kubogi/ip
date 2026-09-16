@@ -16,7 +16,8 @@ available for end users. ♪
 
 ## GUI behavior
 
-The window opens at 440 × 660 px and can be resized. Its chat area shows
+The window opens at 465 × 660 px, matching the portrait background's aspect
+ratio, and can be resized. Its chat area shows
 `src/main/resources/images/bg.jpg` beneath a light tint so messages stay easy
 to read. ☆
 

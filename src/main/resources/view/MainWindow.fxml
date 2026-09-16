@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="660.0" prefWidth="440.0" stylesheets="@../css/main.css"
+<BorderPane prefHeight="660.0" prefWidth="465.0" stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="miku.ui.MainWindow">
     <center>
